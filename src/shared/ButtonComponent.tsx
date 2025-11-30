@@ -1,4 +1,4 @@
-import { cloneElement, isValidElement, type ReactNode } from 'react';
+import { cloneElement, isValidElement, useRef, type ReactNode, type ChangeEvent } from 'react';
 
 export type ButtonVariant = 'default' | 'primary' | 'secondary' | 'danger' | 'success' | 'outline';
 export type ButtonSize = 'sm' | 'md' | 'lg' | 'xl';
@@ -12,6 +12,9 @@ export interface ButtonComponentProps {
   size?: ButtonSize;
   disabled?: boolean;
   className?: string;
+  accept?: string;
+  multiple?: boolean;
+  onFilesSelected?: (files: FileList | null) => void;
 }
 
 const variantStyles: Record<ButtonVariant, string> = {
@@ -53,7 +56,11 @@ function ButtonComponent({
   size = 'md',
   disabled = false,
   className = '',
+  accept,
+  multiple = false,
+  onFilesSelected,
 }: ButtonComponentProps) {
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const disabledStyles = disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer';
   const variantStyle = variantStyles[variant];
   const sizeStyle = sizeStyles[size];
@@ -66,30 +73,61 @@ function ButtonComponent({
   const iconOnlyStyles = isIconOnly ? iconOnlyPaddingStyles[size] : '';
   const finalSizeStyle = isIconOnly ? '' : sizeStyle;
 
+  const handleClick = () => {
+    if (accept && fileInputRef.current) {
+      fileInputRef.current.click();
+    } else {
+      onClick();
+    }
+  };
+
+  const handleFileChange = (event: ChangeEvent<HTMLInputElement>) => {
+    const files = event.target.files;
+    if (onFilesSelected) {
+      onFilesSelected(files);
+    }
+    // Resetear el input para permitir seleccionar el mismo archivo nuevamente
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
+    }
+  };
+
   return (
-    <button
-      onClick={onClick}
-      disabled={disabled}
-      className={`${baseStyles} ${variantStyle} ${finalSizeStyle} ${disabledStyles} ${iconOnlyStyles} ${className}`}
-    >
-      {leftIcon && (
-        isIconOnly && isValidElement(leftIcon) ? (
-          cloneElement(leftIcon, {
-            className: `${iconSizeStyle} ${(leftIcon.props as { className?: string })?.className || ''}`.trim(),
-          } as any)
-        ) : (
-          <span className={`${iconSizeStyle} inline-flex items-center justify-center`}>
-            {leftIcon}
+    <>
+      {accept && (
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept={accept}
+          multiple={multiple}
+          onChange={handleFileChange}
+          style={{ display: 'none' }}
+        />
+      )}
+      <button
+        onClick={handleClick}
+        disabled={disabled}
+        className={`${baseStyles} ${variantStyle} ${finalSizeStyle} ${disabledStyles} ${iconOnlyStyles} ${className}`}
+      >
+        {leftIcon && (
+          isIconOnly && isValidElement(leftIcon) ? (
+            cloneElement(leftIcon, {
+              className: `${iconSizeStyle} ${(leftIcon.props as { className?: string })?.className || ''}`.trim(),
+            } as any)
+          ) : (
+            <span className={`${iconSizeStyle} inline-flex items-center justify-center`}>
+              {leftIcon}
+            </span>
+          )
+        )}
+        {label && <span>{label}</span>}
+        {rightIcon && (
+          <span className={iconSizeStyle}>
+            {rightIcon}
           </span>
-        )
-      )}
-      {label && <span>{label}</span>}
-      {rightIcon && (
-        <span className={iconSizeStyle}>
-          {rightIcon}
-        </span>
-      )}
-    </button>
+        )}
+      </button>
+    </>
   );
 }
 
