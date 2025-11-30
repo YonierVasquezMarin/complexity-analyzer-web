@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { cloneElement, isValidElement, type ReactNode } from 'react';
 
 export type ButtonVariant = 'default' | 'primary' | 'secondary' | 'danger' | 'success' | 'outline';
 export type ButtonSize = 'sm' | 'md' | 'lg' | 'xl';
@@ -15,7 +15,7 @@ export interface ButtonComponentProps {
 }
 
 const variantStyles: Record<ButtonVariant, string> = {
-  default: 'bg-gray-600 hover:bg-gray-700 text-white',
+  default: 'bg-white hover:bg-gray-300 text-black',
   primary: 'bg-blue-600 hover:bg-blue-700 text-white',
   secondary: 'bg-gray-500 hover:bg-gray-600 text-white',
   danger: 'bg-red-600 hover:bg-red-700 text-white',
@@ -37,6 +37,13 @@ const iconSizeStyles: Record<ButtonSize, string> = {
   xl: 'w-7 h-7',
 };
 
+const iconOnlyPaddingStyles: Record<ButtonSize, string> = {
+  sm: 'px-1.5 pt-1.5 pb-2.5',
+  md: 'px-4 pt-3 pb-4',
+  lg: 'px-2.5 pt-2.5 pb-3.5',
+  xl: 'px-3 pt-3 pb-4',
+};
+
 function ButtonComponent({
   leftIcon,
   label,
@@ -47,26 +54,34 @@ function ButtonComponent({
   disabled = false,
   className = '',
 }: ButtonComponentProps) {
-  const baseStyles = 'inline-flex items-center justify-center gap-2 font-medium rounded-lg transition-colors duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-gray-800';
   const disabledStyles = disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer';
   const variantStyle = variantStyles[variant];
   const sizeStyle = sizeStyles[size];
   const iconSizeStyle = iconSizeStyles[size];
 
-  // Si solo hay un icono (sin label ni rightIcon), ajustar el padding
+  // Si solo hay un icono (sin label ni rightIcon), ajustar el padding y remover gap
   const isIconOnly = !label && !rightIcon && leftIcon;
-  const iconOnlyStyles = isIconOnly ? 'p-2' : '';
+  const gapStyle = isIconOnly ? '' : 'gap-2';
+  const baseStyles = `inline-flex items-center justify-center ${gapStyle} font-medium rounded-lg transition-colors duration-200 focus:outline-none active:outline-none`;
+  const iconOnlyStyles = isIconOnly ? iconOnlyPaddingStyles[size] : '';
+  const finalSizeStyle = isIconOnly ? '' : sizeStyle;
 
   return (
     <button
       onClick={onClick}
       disabled={disabled}
-      className={`${baseStyles} ${variantStyle} ${sizeStyle} ${disabledStyles} ${iconOnlyStyles} ${className}`}
+      className={`${baseStyles} ${variantStyle} ${finalSizeStyle} ${disabledStyles} ${iconOnlyStyles} ${className}`}
     >
       {leftIcon && (
-        <span className={iconSizeStyle}>
-          {leftIcon}
-        </span>
+        isIconOnly && isValidElement(leftIcon) ? (
+          cloneElement(leftIcon, {
+            className: `${iconSizeStyle} ${(leftIcon.props as { className?: string })?.className || ''}`.trim(),
+          } as any)
+        ) : (
+          <span className={`${iconSizeStyle} inline-flex items-center justify-center`}>
+            {leftIcon}
+          </span>
+        )
       )}
       {label && <span>{label}</span>}
       {rightIcon && (
