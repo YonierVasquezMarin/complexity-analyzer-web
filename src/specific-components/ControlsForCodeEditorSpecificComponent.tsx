@@ -44,7 +44,7 @@ function ControlsForCodeEditorSpecificComponent() {
       {/* Nombre del archivo - Centro */}
       <div className="flex-1 flex justify-center">
         <span className="text-gray-400 text-lg font-medium">
-          {selectedItem ? getFileNameWithoutExtension(selectedItem.fileName) : 'Ningún archivo seleccionado'}
+          {selectedItem ? getFileNameWithoutExtension(selectedItem.fileName) : ''}
         </span>
       </div>
 
