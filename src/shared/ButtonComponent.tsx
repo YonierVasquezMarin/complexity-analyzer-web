@@ -1,6 +1,6 @@
 import { cloneElement, isValidElement, useRef, type ReactNode, type ChangeEvent } from 'react';
 
-export type ButtonVariant = 'default' | 'primary' | 'secondary' | 'danger' | 'success' | 'outline' | 'ghost';
+export type ButtonVariant = 'default' | 'primary' | 'secondary' | 'danger' | 'success' | 'outline' | 'ghost' | 'blue-outline';
 export type ButtonSize = 'sm' | 'md' | 'lg' | 'xl';
 
 export interface ButtonComponentProps {
@@ -26,6 +26,7 @@ const variantStyles: Record<ButtonVariant, string> = {
   success: 'bg-green-600 hover:bg-green-700 text-white',
   outline: 'bg-transparent border-2 border-gray-600 hover:border-gray-700 text-gray-300 hover:text-white',
   ghost: 'bg-transparent hover:bg-[#4a4a5e] text-white',
+  'blue-outline': 'bg-transparent border-2 border-blue-500 hover:border-blue-400 text-blue-500 hover:text-blue-400',
 };
 
 const sizeStyles: Record<ButtonSize, string> = {
@@ -82,6 +83,7 @@ function ButtonComponent({
   const variantStyle = variantStyles[variant];
   const sizeStyle = sizeStyles[size];
   const iconSizeStyle = iconSizeStyles[size];
+  const iconColorStyle = variant === 'blue-outline' ? 'text-blue-500' : '';
 
   // Si solo hay un icono (sin label ni rightIcon), ajustar el padding y remover gap
   const isIconOnly = !label && !rightIcon && leftIcon;
@@ -134,17 +136,17 @@ function ButtonComponent({
         {leftIcon && (
           isIconOnly && isValidElement(leftIcon) ? (
             cloneElement(leftIcon, {
-              className: `${iconSizeStyle} ${(leftIcon.props as { className?: string })?.className || ''}`.trim(),
+              className: `${iconSizeStyle} ${iconColorStyle} ${(leftIcon.props as { className?: string })?.className || ''}`.trim(),
             } as any)
           ) : (
-            <span className={`${iconSizeStyle} inline-flex items-center justify-center`}>
+            <span className={`${iconSizeStyle} ${iconColorStyle} inline-flex items-center justify-center`}>
               {leftIcon}
             </span>
           )
         )}
         {label && <span>{label}</span>}
         {rightIcon && (
-          <span className={iconSizeStyle}>
+          <span className={`${iconSizeStyle} ${iconColorStyle}`}>
             {rightIcon}
           </span>
         )}

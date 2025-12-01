@@ -123,7 +123,7 @@ function ControlsForFilesSpecificComponent() {
       <ButtonComponent
         leftIcon={<FiUpload />}
         onClick={() => {}}
-        variant="default"
+        variant="blue-outline"
         size="md"
         accept=".txt"
         multiple={true}

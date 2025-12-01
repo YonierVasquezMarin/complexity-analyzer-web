@@ -41,7 +41,7 @@ function ControlsForCodeEditorSpecificComponent() {
         <ButtonComponent
           leftIcon={<FiSave />}
           onClick={handleSave}
-          variant="default"
+          variant="secondary"
           size="md"
           disabled={!selectedItem}
         />
