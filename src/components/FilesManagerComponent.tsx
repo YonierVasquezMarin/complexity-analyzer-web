@@ -3,8 +3,10 @@ import FilesListSpecificComponent from '../specific-components/FilesListSpecific
 
 function FilesManagerComponent() {
   return (
-    <div className="w-[30%] h-screen bg-[#2a2a3e] p-4 box-border overflow-y-auto flex flex-col">
-      <ControlsForFilesSpecificComponent />
+    <div className="w-[30%] h-screen bg-[#2a2a3e] pt-4 pl-4 pr-0 pb-0 box-border flex flex-col">
+      <div className="pr-4">
+        <ControlsForFilesSpecificComponent />
+      </div>
       <FilesListSpecificComponent />
     </div>
   )
