@@ -27,7 +27,7 @@ function ControlsForCodeEditorSpecificComponent() {
 
   const handleExecuteAnalysis = () => {
     if (selectedItem) {
-      navigate('/analysis?executeAnalysis=true');
+      navigate(`/analysis?id=${selectedItem.id}&executeAnalysis=true`);
     }
   };
 
