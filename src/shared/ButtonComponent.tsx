@@ -33,6 +33,13 @@ const sizeStyles: Record<ButtonSize, string> = {
   xl: 'px-8 py-4 text-xl',
 };
 
+const iconOnlyVerticalPaddingStyles: Record<ButtonSize, string> = {
+  sm: 'py-1.5',
+  md: 'py-2.5',
+  lg: 'py-3.5',
+  xl: 'py-4.5',
+};
+
 const iconSizeStyles: Record<ButtonSize, string> = {
   sm: 'w-4 h-4',
   md: 'w-5 h-5',
@@ -41,10 +48,10 @@ const iconSizeStyles: Record<ButtonSize, string> = {
 };
 
 const iconOnlyPaddingStyles: Record<ButtonSize, string> = {
-  sm: 'px-1.5 pt-1.5 pb-2.5',
-  md: 'px-4 pt-3 pb-4',
-  lg: 'px-2.5 pt-2.5 pb-3.5',
-  xl: 'px-3 pt-3 pb-4',
+  sm: 'px-2',
+  md: 'px-4',
+  lg: 'px-6',
+  xl: 'px-8',
 };
 
 function ButtonComponent({
@@ -70,7 +77,7 @@ function ButtonComponent({
   const isIconOnly = !label && !rightIcon && leftIcon;
   const gapStyle = isIconOnly ? '' : 'gap-2';
   const baseStyles = `inline-flex items-center justify-center ${gapStyle} font-medium rounded-lg transition-colors duration-200 focus:outline-none active:outline-none`;
-  const iconOnlyStyles = isIconOnly ? iconOnlyPaddingStyles[size] : '';
+  const iconOnlyStyles = isIconOnly ? `${iconOnlyPaddingStyles[size]} ${iconOnlyVerticalPaddingStyles[size]}` : '';
   const finalSizeStyle = isIconOnly ? '' : sizeStyle;
 
   const handleClick = () => {
