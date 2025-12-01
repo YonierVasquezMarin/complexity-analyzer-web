@@ -1,9 +1,11 @@
+import { useNavigate } from 'react-router-dom';
 import ButtonComponent from '../shared/ButtonComponent';
 import { FiSave, FiEye, FiPlay } from 'react-icons/fi';
 import { usePseudocodeAnalysis } from '../context/PseudocodeAnalysisContext';
 
 function ControlsForCodeEditorSpecificComponent() {
   const { selectedItem } = usePseudocodeAnalysis();
+  const navigate = useNavigate();
 
   const getFileNameWithoutExtension = (fileName: string): string => {
     const lastDotIndex = fileName.lastIndexOf('.');
@@ -24,8 +26,9 @@ function ControlsForCodeEditorSpecificComponent() {
   };
 
   const handleExecuteAnalysis = () => {
-    // TODO: Implementar lógica para ejecutar análisis
-    console.log('Ejecutar análisis');
+    if (selectedItem) {
+      navigate('/analysis?executeAnalysis=true');
+    }
   };
 
   return (

@@ -3,7 +3,11 @@ import { usePseudocodeAnalysis } from '../context/PseudocodeAnalysisContext';
 import EmptyStateComponent from '../shared/EmptyStateComponent';
 import { FiFileText } from 'react-icons/fi';
 
-function AreaToEditCodeSpecificComponent() {
+interface AreaToEditCodeSpecificComponentProps {
+  readOnly?: boolean;
+}
+
+function AreaToEditCodeComponent({ readOnly = false }: AreaToEditCodeSpecificComponentProps) {
   const { selectedItem, updateItem } = usePseudocodeAnalysis();
   const [code, setCode] = useState<string>('');
 
@@ -17,6 +21,8 @@ function AreaToEditCodeSpecificComponent() {
   }, [selectedItem]);
 
   const handleCodeChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    if (readOnly) return;
+    
     const newCode = event.target.value;
     setCode(newCode);
     
@@ -46,10 +52,13 @@ function AreaToEditCodeSpecificComponent() {
       <textarea
         value={code}
         onChange={handleCodeChange}
+        readOnly={readOnly}
         placeholder="Escribe tu pseudocódigo aquí..."
-        className="w-full h-full bg-[#1e1e2e] text-white p-4 font-mono text-sm resize-none outline-none border-none focus:ring-0"
+        className={`w-full h-full bg-[#1e1e2e] text-white p-4 font-mono text-sm resize-none outline-none border-none focus:ring-0 ${
+          readOnly ? 'cursor-default' : ''
+        }`}
         style={{ 
-          caretColor: '#ffffff',
+          caretColor: readOnly ? 'transparent' : '#ffffff',
           lineHeight: '1.6',
         }}
       />
@@ -57,5 +66,5 @@ function AreaToEditCodeSpecificComponent() {
   );
 }
 
-export default AreaToEditCodeSpecificComponent;
+export default AreaToEditCodeComponent;
 

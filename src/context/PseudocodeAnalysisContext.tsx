@@ -1,6 +1,7 @@
 import { createContext, useContext, useState, useEffect, type ReactNode } from 'react';
 import type { PseudocodeAnalysisModel } from '../models/PseudocodeAnalysisModel';
 import { PseudocodeAnalysisService } from '../services/PseudocodeAnalysisService';
+import { LocalStorageService } from '../services/LocalStorageService';
 
 interface PseudocodeAnalysisContextType {
   items: PseudocodeAnalysisModel[];
@@ -13,6 +14,8 @@ interface PseudocodeAnalysisContextType {
 }
 
 const PseudocodeAnalysisContext = createContext<PseudocodeAnalysisContextType | undefined>(undefined);
+
+const SELECTED_ITEM_ID_KEY = 'selectedItemId';
 
 interface PseudocodeAnalysisProviderProps {
   children: ReactNode;
@@ -43,15 +46,33 @@ export function PseudocodeAnalysisProvider({ children }: PseudocodeAnalysisProvi
 
   const selectItem = (item: PseudocodeAnalysisModel | null) => {
     setSelectedItem(item);
+    // Guardar el id del item seleccionado en localStorage
+    if (item) {
+      LocalStorageService.set<number>(SELECTED_ITEM_ID_KEY, item.id);
+    } else {
+      LocalStorageService.remove(SELECTED_ITEM_ID_KEY);
+    }
   };
 
   const getItemById = (id: number): PseudocodeAnalysisModel | null => {
     return PseudocodeAnalysisService.getById(id);
   };
 
-  // Cargar items al montar el componente
+  // Cargar items al montar el componente y restaurar el item seleccionado
   useEffect(() => {
     loadItems();
+    
+    // Restaurar el item seleccionado desde localStorage
+    const savedItemId = LocalStorageService.get<number>(SELECTED_ITEM_ID_KEY);
+    if (savedItemId !== null) {
+      const item = PseudocodeAnalysisService.getById(savedItemId);
+      if (item) {
+        setSelectedItem(item);
+      } else {
+        // Si el item no existe, limpiar el localStorage
+        LocalStorageService.remove(SELECTED_ITEM_ID_KEY);
+      }
+    }
   }, []);
 
   return (
