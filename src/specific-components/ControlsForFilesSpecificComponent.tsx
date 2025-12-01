@@ -12,7 +12,9 @@ function ControlsForFilesSpecificComponent() {
       return;
     }
 
-    // Procesar cada archivo .txt seleccionado
+    // Primero, leer todos los archivos .txt en paralelo
+    const filePromises: Array<Promise<{ name: string; content: string }>> = [];
+    
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
       
@@ -22,21 +24,38 @@ function ControlsForFilesSpecificComponent() {
         continue;
       }
 
+      // Agregar la promesa de lectura del archivo
+      filePromises.push(
+        readFileAsText(file).then(content => ({
+          name: file.name,
+          content,
+        })).catch(error => {
+          console.error(`Error al leer el archivo "${file.name}":`, error);
+          throw error;
+        })
+      );
+    }
+
+    // Esperar a que todos los archivos se lean
+    const fileDataArray = await Promise.all(filePromises);
+
+    // Ahora guardar todos los archivos de forma secuencial para asegurar IDs únicos
+    for (const fileData of fileDataArray) {
       try {
-        // Leer el contenido del archivo
-        const fileContent = await readFileAsText(file);
+        // Obtener el siguiente ID disponible
+        const nextId = PseudocodeAnalysisService.getNextId();
         
         // Crear el modelo con id consecutivo
         const newModel: PseudocodeAnalysisModel = {
-          id: PseudocodeAnalysisService.getNextId(),
-          fileName: file.name,
-          pseudocode: fileContent,
+          id: nextId,
+          fileName: fileData.name,
+          pseudocode: fileData.content,
         };
 
         // Agregar el modelo usando el contexto
         addItem(newModel);
       } catch (error) {
-        console.error(`Error al procesar el archivo "${file.name}":`, error);
+        console.error(`Error al guardar el archivo "${fileData.name}":`, error);
       }
     }
   };
