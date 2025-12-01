@@ -19,17 +19,17 @@ function NodeForAnalysisResultComponent({
       className={`bg-gray-200 border-2 rounded px-4 py-2 min-w-[${width}px] min-h-[${height}px] flex items-center justify-center ${
         selected ? 'border-blue-500' : 'border-gray-700'
       }`}
-      style={{ width: `${width}px`, minHeight: `${height}px` }}
+      style={{ width: `${width}px`, minHeight: `${height}px`, cursor: 'default' }}
     >
-      <Handle type="target" position={Position.Top} id="top" />
-      <Handle type="source" position={Position.Left} id="left" />
-      <Handle type="source" position={Position.Right} id="right" />
-      <Handle type="target" position={Position.Left} id="left-target" />
-      <Handle type="target" position={Position.Right} id="right-target" />
+      <Handle type="target" position={Position.Top} id="top" isConnectable={false} />
+      <Handle type="source" position={Position.Left} id="left" isConnectable={false} />
+      <Handle type="source" position={Position.Right} id="right" isConnectable={false} />
+      <Handle type="target" position={Position.Left} id="left-target" isConnectable={false} />
+      <Handle type="target" position={Position.Right} id="right-target" isConnectable={false} />
       <div className="text-sm font-semibold text-gray-800 text-center">
         {data.title}
       </div>
-      <Handle type="source" position={Position.Bottom} id="bottom" />
+      <Handle type="source" position={Position.Bottom} id="bottom" isConnectable={false} />
     </div>
   );
 }

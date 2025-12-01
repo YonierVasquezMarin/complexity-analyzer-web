@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 import ReactFlow, {
   ConnectionMode,
+  MarkerType,
 } from 'reactflow';
 import type { Node, Edge } from 'reactflow';
 import 'reactflow/dist/style.css';
@@ -60,26 +61,38 @@ function AnalysisResultsComponent() {
         targetHandle: 'top',
         animated: false,
         style: { stroke: '#3b82f6', strokeWidth: 2 },
+        markerEnd: {
+          type: MarkerType.ArrowClosed,
+          color: '#3b82f6',
+        },
       },
       {
         id: 'hijo-nieto1',
         source: 'hijo',
         target: 'nieto1',
-        type: 'straight',
+        type: 'step',
         sourceHandle: 'left',
         targetHandle: 'top',
         animated: false,
         style: { stroke: '#3b82f6', strokeWidth: 2 },
+        markerEnd: {
+          type: MarkerType.ArrowClosed,
+          color: '#3b82f6',
+        },
       },
       {
         id: 'hijo-nieto2',
         source: 'hijo',
         target: 'nieto2',
-        type: 'straight',
+        type: 'step',
         sourceHandle: 'right',
         targetHandle: 'top',
         animated: false,
         style: { stroke: '#3b82f6', strokeWidth: 2 },
+        markerEnd: {
+          type: MarkerType.ArrowClosed,
+          color: '#3b82f6',
+        },
       },
       {
         id: 'nieto1-central',
@@ -90,6 +103,10 @@ function AnalysisResultsComponent() {
         targetHandle: 'left-target',
         animated: false,
         style: { stroke: '#3b82f6', strokeWidth: 2 },
+        markerEnd: {
+          type: MarkerType.ArrowClosed,
+          color: '#3b82f6',
+        },
       },
       {
         id: 'nieto2-central',
@@ -100,6 +117,10 @@ function AnalysisResultsComponent() {
         targetHandle: 'right-target',
         animated: false,
         style: { stroke: '#3b82f6', strokeWidth: 2 },
+        markerEnd: {
+          type: MarkerType.ArrowClosed,
+          color: '#3b82f6',
+        },
       },
     ],
     []
@@ -112,7 +133,11 @@ function AnalysisResultsComponent() {
         edges={edges}
         nodeTypes={nodeTypes}
         connectionMode={ConnectionMode.Loose}
+        nodesConnectable={false}
+        edgesUpdatable={false}
+        elementsSelectable={false}
         fitView
+        fitViewOptions={{ padding: 0.2 }}
         panOnDrag={false}
         zoomOnScroll={false}
         zoomOnPinch={false}
@@ -123,6 +148,19 @@ function AnalysisResultsComponent() {
         <style>{`
           .react-flow__attribution {
             display: none !important;
+          }
+          .react-flow__handle {
+            opacity: 0 !important;
+            width: 0 !important;
+            height: 0 !important;
+            cursor: default !important;
+            pointer-events: none !important;
+          }
+          .react-flow__node {
+            cursor: default !important;
+          }
+          .react-flow__pane {
+            cursor: default !important;
           }
         `}</style>
       </ReactFlow>
