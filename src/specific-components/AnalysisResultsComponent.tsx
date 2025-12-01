@@ -157,7 +157,7 @@ function AnalysisResultsComponent() {
             pointer-events: none !important;
           }
           .react-flow__node {
-            cursor: default !important;
+            cursor: pointer !important;
           }
           .react-flow__pane {
             cursor: default !important;
