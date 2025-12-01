@@ -1,8 +1,11 @@
 import ButtonComponent from '../shared/ButtonComponent';
-import { FiUpload } from 'react-icons/fi';
+import { FiUpload, FiPlus } from 'react-icons/fi';
 import { usePseudocodeAnalysis } from '../context/PseudocodeAnalysisContext';
 import { PseudocodeAnalysisService } from '../services/PseudocodeAnalysisService';
 import type { PseudocodeAnalysisModel } from '../models/PseudocodeAnalysisModel';
+import { ModalService } from '../services/ModalService';
+import NewFileNameFormComponent from './NewFileNameFormComponent';
+import type { NameForNewFileModel } from '../models/ModalDataModel';
 
 function ControlsForFilesSpecificComponent() {
   const { addItem } = usePseudocodeAnalysis();
@@ -80,8 +83,43 @@ function ControlsForFilesSpecificComponent() {
     });
   };
 
+  const handleCreateNewFile = (data: NameForNewFileModel) => {
+    if (data.fileName.trim()) {
+      const nextId = PseudocodeAnalysisService.getNextId();
+      const newModel: PseudocodeAnalysisModel = {
+        id: nextId,
+        fileName: data.fileName.trim(),
+        pseudocode: '',
+      };
+      addItem(newModel);
+    }
+  };
+
+  const handleNewFileClick = () => {
+    console.log('handleNewFileClick llamado');
+    ModalService.showModal<NameForNewFileModel>({
+      title: 'Nuevo Archivo',
+      size: 'md',
+      content: <NewFileNameFormComponent />,
+      labelYes: 'Ok',
+      labelNo: 'Cancelar',
+      actionForYes: handleCreateNewFile,
+      actionForNo: () => {
+        // No hacer nada al cancelar
+      },
+    });
+    console.log('ModalService.showModal llamado, estado:', ModalService.getState());
+  };
+
   return (
-    <div>
+    <div className="flex gap-2">
+      <ButtonComponent
+        leftIcon={<FiPlus />}
+        label="Nuevo Archivo"
+        onClick={handleNewFileClick}
+        variant="primary"
+        size="md"
+      />
       <ButtonComponent
         leftIcon={<FiUpload />}
         onClick={() => {}}
