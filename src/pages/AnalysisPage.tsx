@@ -48,7 +48,11 @@ function AnalysisPage() {
 
   // Si no hay item, no renderizar nada (el useEffect manejará la redirección)
   if (!currentItem) {
-    return null;
+    return (
+      <div className="w-full h-screen flex items-center justify-center bg-[#1e1e2e]">
+        {/* Puedes agregar un mensaje o simplemente dejar el fondo plano */}
+      </div>
+    );
   }
 
   return (
