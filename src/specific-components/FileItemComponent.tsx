@@ -3,6 +3,7 @@ import type { PseudocodeAnalysisModel } from '../models/PseudocodeAnalysisModel'
 import { usePseudocodeAnalysis } from '../context/PseudocodeAnalysisContext';
 import { ModalService } from '../services/ModalService';
 import { FiDownload, FiTrash2 } from 'react-icons/fi';
+import ButtonComponent from '../shared/ButtonComponent';
 
 interface FileItemComponentProps {
   item: PseudocodeAnalysisModel;
@@ -22,8 +23,8 @@ function FileItemComponent({ item, isSelected, onClick }: FileItemComponentProps
     return fileName.substring(0, lastDotIndex);
   };
 
-  const handleDownload = (e: React.MouseEvent) => {
-    e.stopPropagation();
+  const handleDownload = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
     const blob = new Blob([item.pseudocode], { type: 'text/plain' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
@@ -35,8 +36,8 @@ function FileItemComponent({ item, isSelected, onClick }: FileItemComponentProps
     URL.revokeObjectURL(url);
   };
 
-  const handleDelete = (e: React.MouseEvent) => {
-    e.stopPropagation();
+  const handleDelete = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
     ModalService.showModal({
       title: 'Confirmar eliminación',
       size: 'sm',
@@ -69,20 +70,20 @@ function FileItemComponent({ item, isSelected, onClick }: FileItemComponentProps
           isHovered ? 'opacity-100' : 'opacity-0'
         }`}
       >
-        <button
+        <ButtonComponent
           onClick={handleDownload}
-          className="p-1 rounded hover:bg-[#4a4a5e] transition-colors"
+          variant="ghost"
+          size="sm"
+          leftIcon={<FiDownload size={16} />}
           title="Descargar archivo"
-        >
-          <FiDownload size={16} className="text-white" />
-        </button>
-        <button
+        />
+        <ButtonComponent
           onClick={handleDelete}
-          className="p-1 rounded hover:bg-[#4a4a5e] transition-colors"
+          variant="ghost"
+          size="sm"
+          leftIcon={<FiTrash2 size={16} />}
           title="Eliminar archivo"
-        >
-          <FiTrash2 size={16} className="text-white" />
-        </button>
+        />
       </div>
     </li>
   );

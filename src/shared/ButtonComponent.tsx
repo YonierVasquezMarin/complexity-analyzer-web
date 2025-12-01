@@ -1,17 +1,18 @@
 import { cloneElement, isValidElement, useRef, type ReactNode, type ChangeEvent } from 'react';
 
-export type ButtonVariant = 'default' | 'primary' | 'secondary' | 'danger' | 'success' | 'outline';
+export type ButtonVariant = 'default' | 'primary' | 'secondary' | 'danger' | 'success' | 'outline' | 'ghost';
 export type ButtonSize = 'sm' | 'md' | 'lg' | 'xl';
 
 export interface ButtonComponentProps {
   leftIcon?: ReactNode;
   label?: string;
   rightIcon?: ReactNode;
-  onClick: () => void;
+  onClick: (e?: React.MouseEvent) => void;
   variant?: ButtonVariant;
   size?: ButtonSize;
   disabled?: boolean;
   className?: string;
+  title?: string;
   accept?: string;
   multiple?: boolean;
   onFilesSelected?: (files: FileList | null) => void;
@@ -24,6 +25,7 @@ const variantStyles: Record<ButtonVariant, string> = {
   danger: 'bg-red-600 hover:bg-red-700 text-white',
   success: 'bg-green-600 hover:bg-green-700 text-white',
   outline: 'bg-transparent border-2 border-gray-600 hover:border-gray-700 text-gray-300 hover:text-white',
+  ghost: 'bg-transparent hover:bg-[#4a4a5e] text-white',
 };
 
 const sizeStyles: Record<ButtonSize, string> = {
@@ -54,6 +56,13 @@ const iconOnlyPaddingStyles: Record<ButtonSize, string> = {
   xl: 'px-8',
 };
 
+const ghostPaddingStyles: Record<ButtonSize, string> = {
+  sm: 'p-1',
+  md: 'p-1.5',
+  lg: 'p-2',
+  xl: 'p-2.5',
+};
+
 function ButtonComponent({
   leftIcon,
   label,
@@ -63,6 +72,7 @@ function ButtonComponent({
   size = 'md',
   disabled = false,
   className = '',
+  title,
   accept,
   multiple = false,
   onFilesSelected,
@@ -76,15 +86,19 @@ function ButtonComponent({
   // Si solo hay un icono (sin label ni rightIcon), ajustar el padding y remover gap
   const isIconOnly = !label && !rightIcon && leftIcon;
   const gapStyle = isIconOnly ? '' : 'gap-2';
-  const baseStyles = `inline-flex items-center justify-center ${gapStyle} font-medium rounded-lg transition-colors duration-200 focus:outline-none active:outline-none`;
+  const baseStyles = `inline-flex items-center justify-center ${gapStyle} font-medium rounded transition-colors duration-200 focus:outline-none active:outline-none`;
   const iconOnlyStyles = isIconOnly ? `${iconOnlyPaddingStyles[size]} ${iconOnlyVerticalPaddingStyles[size]}` : '';
   const finalSizeStyle = isIconOnly ? '' : sizeStyle;
+  
+  // Si es variante ghost, usar padding específico para ghost
+  const ghostStyles = variant === 'ghost' ? ghostPaddingStyles[size] : '';
+  const finalPaddingStyle = variant === 'ghost' ? ghostStyles : iconOnlyStyles;
 
-  const handleClick = () => {
+  const handleClick = (e: React.MouseEvent) => {
     if (accept && fileInputRef.current) {
       fileInputRef.current.click();
     } else {
-      onClick();
+      onClick(e);
     }
   };
 
@@ -114,7 +128,8 @@ function ButtonComponent({
       <button
         onClick={handleClick}
         disabled={disabled}
-        className={`${baseStyles} ${variantStyle} ${finalSizeStyle} ${disabledStyles} ${iconOnlyStyles} ${className}`}
+        title={title}
+        className={`${baseStyles} ${variantStyle} ${finalSizeStyle} ${disabledStyles} ${finalPaddingStyle} ${className}`}
       >
         {leftIcon && (
           isIconOnly && isValidElement(leftIcon) ? (
