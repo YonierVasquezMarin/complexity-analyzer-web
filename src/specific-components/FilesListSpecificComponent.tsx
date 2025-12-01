@@ -1,17 +1,10 @@
 import { usePseudocodeAnalysis } from '../context/PseudocodeAnalysisContext';
 import EmptyStateComponent from '../shared/EmptyStateComponent';
 import { BsFolder2Open } from 'react-icons/bs';
+import FileItemComponent from './FileItemComponent';
 
 function FilesListSpecificComponent() {
   const { items, selectedItem, selectItem } = usePseudocodeAnalysis();
-
-  const getFileNameWithoutExtension = (fileName: string): string => {
-    const lastDotIndex = fileName.lastIndexOf('.');
-    if (lastDotIndex === -1) {
-      return fileName;
-    }
-    return fileName.substring(0, lastDotIndex);
-  };
 
   const handleItemClick = (item: typeof items[0]) => {
     selectItem(item);
@@ -29,17 +22,12 @@ function FilesListSpecificComponent() {
           {items.map((item) => {
             const isSelected = selectedItem?.id === item.id;
             return (
-              <li
+              <FileItemComponent
                 key={item.id}
-                onClick={() => handleItemClick(item)}
-                className={`text-white text-sm p-2 rounded cursor-pointer transition-colors ${
-                  isSelected
-                    ? 'bg-[#5a5a7e] hover:bg-[#6a6a8e]'
-                    : 'bg-[#3a3a4e] hover:bg-[#454556]'
-                }`}
-              >
-                {getFileNameWithoutExtension(item.fileName)}
-              </li>
+                item={item}
+                isSelected={isSelected}
+                onClick={handleItemClick}
+              />
             );
           })}
         </ul>

@@ -29,11 +29,23 @@ function ModalComponent() {
   }, []);
 
   const handleYes = () => {
+    if (!options) return;
+    
     console.log('handleYes llamado, contentRef.current =', contentRef.current);
-    if (contentRef.current) {
+    // Si el contenido es string, no hay ref, ejecutar directamente
+    if (typeof options.content === 'string') {
+      if (options.actionForYes) {
+        options.actionForYes(undefined);
+      }
+      ModalService.closeModal();
+    } else if (contentRef.current) {
       ModalService.executeYesAction(contentRef as React.RefObject<ModalDataProvider>);
     } else {
-      console.error('contentRef.current es null');
+      // Si no hay ref pero hay actionForYes, ejecutarlo sin datos
+      if (options.actionForYes) {
+        options.actionForYes(undefined);
+      }
+      ModalService.closeModal();
     }
   };
 
@@ -66,7 +78,10 @@ function ModalComponent() {
   const sizeClass = sizeClasses[options.size || 'md'];
 
   // Clonar el contenido para pasarle el ref si es un elemento React válido
-  const contentWithRef = isValidElement(options.content)
+  // Si es string, renderizarlo directamente
+  const contentWithRef = typeof options.content === 'string'
+    ? <p className="text-white">{options.content}</p>
+    : isValidElement(options.content)
     ? cloneElement(options.content as React.ReactElement<any>, { 
         ref: contentRef,
         key: 'modal-content' // Agregar key para forzar re-render cuando cambia el contenido

@@ -11,6 +11,7 @@ interface PseudocodeAnalysisContextType {
   loadItems: () => void;
   addItem: (item: PseudocodeAnalysisModel) => void;
   updateItem: (item: PseudocodeAnalysisModel) => void;
+  deleteItem: (id: number) => void;
   selectItem: (item: PseudocodeAnalysisModel | null) => void;
   getItemById: (id: number) => PseudocodeAnalysisModel | null;
   setEditedCode: (code: string) => void;
@@ -49,6 +50,17 @@ export function PseudocodeAnalysisProvider({ children }: PseudocodeAnalysisProvi
     if (selectedItem && selectedItem.id === item.id) {
       setSelectedItem(item);
     }
+  };
+
+  const deleteItem = (id: number) => {
+    PseudocodeAnalysisService.deleteById(id);
+    // Si el item eliminado es el seleccionado, limpiar la selección
+    if (selectedItem && selectedItem.id === id) {
+      setSelectedItem(null);
+      setEditedCode('');
+      LocalStorageService.remove(SELECTED_ITEM_ID_KEY);
+    }
+    loadItems();
   };
 
   const selectItem = (item: PseudocodeAnalysisModel | null) => {
@@ -109,6 +121,7 @@ export function PseudocodeAnalysisProvider({ children }: PseudocodeAnalysisProvi
         loadItems,
         addItem,
         updateItem,
+        deleteItem,
         selectItem,
         getItemById,
         setEditedCode: handleSetEditedCode,

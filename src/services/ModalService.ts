@@ -6,7 +6,7 @@ export type ModalSize = 'sm' | 'md' | 'lg' | 'xl' | 'full';
 export interface ModalOptions<T = any> {
   title?: string;
   size?: ModalSize;
-  content: ReactNode;
+  content: ReactNode | string;
   actionForYes?: (data: T) => void;
   actionForNo?: () => void;
   labelYes?: string;
