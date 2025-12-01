@@ -17,7 +17,7 @@ function FilesListSpecificComponent() {
     <div className="flex-1 flex flex-col mt-5 overflow-y-auto min-h-0 pr-4 pb-4">
       {items.length === 0 ? (
         <EmptyStateComponent
-          icon={<BsFolder2Open size={64} />}
+          icon={<BsFolder2Open size={80} />}
           label="No hay archivos guardados"
         />
       ) : (

@@ -29,7 +29,7 @@ function ControlsForCodeEditorSpecificComponent() {
   };
 
   return (
-    <div className="flex items-center justify-between w-full p-4 bg-[#2a2a3e] border-b border-[#3a3a4e]">
+    <div className="flex items-center justify-between w-full p-4 bg-[#1e1e2e] border-b border-[#3a3a4e]">
       {/* Botón Guardar - Izquierda */}
       <div className="flex-shrink-0">
         <ButtonComponent

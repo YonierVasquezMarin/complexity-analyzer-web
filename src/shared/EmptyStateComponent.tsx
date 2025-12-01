@@ -8,7 +8,7 @@ interface EmptyStateComponentProps {
 
 function EmptyStateComponent({ icon, label, className = '' }: EmptyStateComponentProps) {
   return (
-    <div className={`flex flex-col items-center justify-center h-full w-full ${className}`}>
+    <div className={`flex flex-col items-center justify-center h-full w-full select-none ${className}`}>
       <div className="opacity-40 text-gray-400 mb-4">
         {icon}
       </div>
