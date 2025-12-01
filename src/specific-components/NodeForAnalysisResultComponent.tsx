@@ -3,8 +3,6 @@ import { Handle, Position } from 'reactflow';
 interface NodeForAnalysisResultComponentProps {
   data: {
     title: string;
-    width?: number;
-    height?: number;
   };
   selected?: boolean;
 }
@@ -13,8 +11,8 @@ function NodeForAnalysisResultComponent({
   data,
   selected = false,
 }: NodeForAnalysisResultComponentProps) {
-  const width = data.width || 120;
-  const height = data.height || 60;
+  const width = 120;
+  const height = 60;
 
   return (
     <div

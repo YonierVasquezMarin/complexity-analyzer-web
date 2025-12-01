@@ -11,10 +11,6 @@ const nodeTypes = {
 };
 
 function AnalysisResultsComponent() {
-  // Dimensiones de los nodos
-  const nodeWidth = 120;
-  const nodeHeight = 60;
-
   // Definición de nodos
   const nodes = useMemo<Node[]>(
     () => [
@@ -22,34 +18,34 @@ function AnalysisResultsComponent() {
         id: 'padre',
         type: 'custom',
         position: { x: 340, y: 40 },
-        data: { title: 'Padre', width: nodeWidth, height: nodeHeight },
+        data: { title: 'Padre' },
       },
       {
         id: 'hijo',
         type: 'custom',
         position: { x: 340, y: 250 },
-        data: { title: 'Hijo', width: nodeWidth, height: nodeHeight },
+        data: { title: 'Hijo' },
       },
       {
         id: 'nieto1',
         type: 'custom',
         position: { x: 90, y: 450 },
-        data: { title: 'Nieto 1', width: nodeWidth, height: nodeHeight },
+        data: { title: 'Nieto 1' },
       },
       {
         id: 'nieto2',
         type: 'custom',
         position: { x: 590, y: 450 },
-        data: { title: 'Nieto 2', width: nodeWidth, height: nodeHeight },
+        data: { title: 'Nieto 2' },
       },
       {
         id: 'central',
         type: 'custom',
         position: { x: 340, y: 450 },
-        data: { title: 'Central', width: nodeWidth, height: nodeHeight },
+        data: { title: 'Central' },
       },
     ],
-    [nodeWidth, nodeHeight]
+    []
   );
 
   // Definición de conexiones (edges)
