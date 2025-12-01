@@ -1,4 +1,6 @@
 import { usePseudocodeAnalysis } from '../context/PseudocodeAnalysisContext';
+import EmptyStateComponent from '../shared/EmptyStateComponent';
+import { BsFolder2Open } from 'react-icons/bs';
 
 function FilesListSpecificComponent() {
   const { items } = usePseudocodeAnalysis();
@@ -12,9 +14,12 @@ function FilesListSpecificComponent() {
   };
 
   return (
-    <div className="mt-5">
+    <div className="flex-1 flex flex-col mt-5">
       {items.length === 0 ? (
-        <p className="text-gray-400 text-sm">No hay archivos guardados</p>
+        <EmptyStateComponent
+          icon={<BsFolder2Open size={64} />}
+          label="No hay archivos guardados"
+        />
       ) : (
         <ul className="space-y-5">
           {items.map((item) => (
