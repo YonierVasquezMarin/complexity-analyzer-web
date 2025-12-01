@@ -61,7 +61,7 @@ function ButtonComponent({
   onFilesSelected,
 }: ButtonComponentProps) {
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const disabledStyles = disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer';
+  const disabledStyles = disabled ? 'opacity-50 cursor-default' : 'cursor-pointer';
   const variantStyle = variantStyles[variant];
   const sizeStyle = sizeStyles[size];
   const iconSizeStyle = iconSizeStyles[size];

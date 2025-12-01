@@ -65,5 +65,18 @@ export class PseudocodeAnalysisService {
   static clearAll(): void {
     LocalStorageService.remove(STORAGE_KEY);
   }
+
+  /**
+   * Actualiza un análisis existente
+   * @param model - Modelo actualizado
+   */
+  static update(model: PseudocodeAnalysisModel): void {
+    const list = this.getAll();
+    const index = list.findIndex(item => item.id === model.id);
+    if (index !== -1) {
+      list[index] = model;
+      LocalStorageService.set(STORAGE_KEY, list);
+    }
+  }
 }
 

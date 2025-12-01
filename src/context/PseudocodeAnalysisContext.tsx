@@ -7,6 +7,7 @@ interface PseudocodeAnalysisContextType {
   selectedItem: PseudocodeAnalysisModel | null;
   loadItems: () => void;
   addItem: (item: PseudocodeAnalysisModel) => void;
+  updateItem: (item: PseudocodeAnalysisModel) => void;
   selectItem: (item: PseudocodeAnalysisModel | null) => void;
   getItemById: (id: number) => PseudocodeAnalysisModel | null;
 }
@@ -31,6 +32,15 @@ export function PseudocodeAnalysisProvider({ children }: PseudocodeAnalysisProvi
     loadItems();
   };
 
+  const updateItem = (item: PseudocodeAnalysisModel) => {
+    PseudocodeAnalysisService.update(item);
+    loadItems();
+    // Si el item actualizado es el seleccionado, actualizar también el estado
+    if (selectedItem && selectedItem.id === item.id) {
+      setSelectedItem(item);
+    }
+  };
+
   const selectItem = (item: PseudocodeAnalysisModel | null) => {
     setSelectedItem(item);
   };
@@ -51,6 +61,7 @@ export function PseudocodeAnalysisProvider({ children }: PseudocodeAnalysisProvi
         selectedItem,
         loadItems,
         addItem,
+        updateItem,
         selectItem,
         getItemById,
       }}
