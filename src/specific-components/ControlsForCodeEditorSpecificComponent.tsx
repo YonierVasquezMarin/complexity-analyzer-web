@@ -4,7 +4,7 @@ import { FiSave, FiEye, FiPlay } from 'react-icons/fi';
 import { usePseudocodeAnalysis } from '../context/PseudocodeAnalysisContext';
 
 function ControlsForCodeEditorSpecificComponent() {
-  const { selectedItem } = usePseudocodeAnalysis();
+  const { selectedItem, saveEditedCode, setExecuteAnalysisInThisMoment } = usePseudocodeAnalysis();
   const navigate = useNavigate();
 
   const getFileNameWithoutExtension = (fileName: string): string => {
@@ -16,8 +16,10 @@ function ControlsForCodeEditorSpecificComponent() {
   };
 
   const handleSave = () => {
-    // TODO: Implementar lógica de guardado
-    console.log('Guardar');
+    if (selectedItem) {
+      saveEditedCode();
+      console.log('Código guardado exitosamente');
+    }
   };
 
   const handleViewResults = () => {
@@ -27,7 +29,8 @@ function ControlsForCodeEditorSpecificComponent() {
 
   const handleExecuteAnalysis = () => {
     if (selectedItem) {
-      navigate(`/analysis?id=${selectedItem.id}&executeAnalysis=true`);
+      setExecuteAnalysisInThisMoment(true);
+      navigate('/analysis');
     }
   };
 

@@ -1,51 +1,50 @@
 import { useEffect, useState } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { usePseudocodeAnalysis } from '../context/PseudocodeAnalysisContext';
-import { PseudocodeAnalysisService } from '../services/PseudocodeAnalysisService';
 import type { PseudocodeAnalysisModel } from '../models/PseudocodeAnalysisModel';
 import AreaToEditCodeComponent from '../components/AreaToEditCodeComponent';
 import AnalysisResultsComponent from '../specific-components/AnalysisResultsComponent';
 
 function AnalysisPage() {
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  const { selectItem } = usePseudocodeAnalysis();
+  const { selectedItem, executeAnalysisInThisMoment, setExecuteAnalysisInThisMoment } = usePseudocodeAnalysis();
   const [currentItem, setCurrentItem] = useState<PseudocodeAnalysisModel | null>(null);
-  const idParam = searchParams.get('id');
-  const executeAnalysis = searchParams.get('executeAnalysis');
+  const [shouldExecuteAnalysis, setShouldExecuteAnalysis] = useState<boolean>(false);
 
   useEffect(() => {
-    // Obtener el item directamente del servicio usando el ID de la URL
-    if (idParam) {
-      const pseudocodeId = parseInt(idParam, 10);
-      if (!isNaN(pseudocodeId)) {
-        // Usar el servicio directamente para evitar problemas de timing con el contexto
-        const pseudocodeItem = PseudocodeAnalysisService.getById(pseudocodeId);
-        if (pseudocodeItem) {
-          setCurrentItem(pseudocodeItem);
-          // Seleccionar el item en el contexto para que otros componentes puedan usarlo
-          selectItem(pseudocodeItem);
-        } else {
-          console.error('No se encontró el pseudocódigo con ID:', pseudocodeId);
-          navigate(-1);
+    // Esperar un pequeño tiempo para que el estado global se cargue
+    const timer = setTimeout(() => {
+      if (selectedItem) {
+        setCurrentItem(selectedItem);
+        // Si executeAnalysisInThisMoment es true, marcar para ejecutar el análisis
+        if (executeAnalysisInThisMoment) {
+          setShouldExecuteAnalysis(true);
         }
       } else {
+        // Si no hay item seleccionado, redirigir
         navigate(-1);
       }
-    } else {
-      // Si no hay ID en la URL, redirigir
-      navigate(-1);
-    }
-  }, [idParam, navigate, selectItem]);
+    }, 100); // Pequeño delay de 100ms para asegurar que el estado se cargue
+
+    return () => clearTimeout(timer);
+  }, [selectedItem, executeAnalysisInThisMoment, navigate]);
 
   useEffect(() => {
-    // Capturar el parámetro executeAnalysis y ejecutar el análisis
-    if (executeAnalysis === 'true' && currentItem) {
+    // Ejecutar el análisis si está marcado para ejecutarse
+    if (shouldExecuteAnalysis && currentItem) {
       console.log('Ejecutar análisis para ID:', currentItem.id);
       console.log('Pseudocódigo obtenido:', currentItem);
       // TODO: Implementar lógica adicional para ejecutar el análisis con el pseudocódigo
+      setShouldExecuteAnalysis(false); // Resetear después de ejecutar
     }
-  }, [executeAnalysis, currentItem]);
+  }, [shouldExecuteAnalysis, currentItem]);
+
+  // Limpiar executeAnalysisInThisMoment al desmontar el componente (al salir de la página)
+  useEffect(() => {
+    return () => {
+      setExecuteAnalysisInThisMoment(false);
+    };
+  }, [setExecuteAnalysisInThisMoment]);
 
   // Si no hay item, no renderizar nada (el useEffect manejará la redirección)
   if (!currentItem) {

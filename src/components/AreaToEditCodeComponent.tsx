@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useEffect } from 'react';
 import { usePseudocodeAnalysis } from '../context/PseudocodeAnalysisContext';
 import EmptyStateComponent from '../shared/EmptyStateComponent';
 import { FiFileText } from 'react-icons/fi';
@@ -8,31 +8,24 @@ interface AreaToEditCodeSpecificComponentProps {
 }
 
 function AreaToEditCodeComponent({ readOnly = false }: AreaToEditCodeSpecificComponentProps) {
-  const { selectedItem, updateItem } = usePseudocodeAnalysis();
-  const [code, setCode] = useState<string>('');
+  const { selectedItem, editedCode, setEditedCode } = usePseudocodeAnalysis();
 
   // Actualizar el código cuando cambia el item seleccionado
   useEffect(() => {
     if (selectedItem) {
-      setCode(selectedItem.pseudocode);
+      setEditedCode(selectedItem.pseudocode);
     } else {
-      setCode('');
+      setEditedCode('');
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedItem]);
 
   const handleCodeChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     if (readOnly) return;
     
     const newCode = event.target.value;
-    setCode(newCode);
-    
-    // Actualizar el item en el contexto si hay uno seleccionado
-    if (selectedItem) {
-      updateItem({
-        ...selectedItem,
-        pseudocode: newCode,
-      });
-    }
+    // Solo actualizar el estado temporal, no guardar automáticamente
+    setEditedCode(newCode);
   };
 
   // Si no hay archivo seleccionado, mostrar el estado vacío
@@ -50,7 +43,7 @@ function AreaToEditCodeComponent({ readOnly = false }: AreaToEditCodeSpecificCom
   return (
     <div className="flex-1 w-full h-full">
       <textarea
-        value={code}
+        value={editedCode}
         onChange={handleCodeChange}
         readOnly={readOnly}
         placeholder="Escribe tu pseudocódigo aquí..."

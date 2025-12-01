@@ -6,11 +6,16 @@ import { LocalStorageService } from '../services/LocalStorageService';
 interface PseudocodeAnalysisContextType {
   items: PseudocodeAnalysisModel[];
   selectedItem: PseudocodeAnalysisModel | null;
+  editedCode: string;
+  executeAnalysisInThisMoment: boolean;
   loadItems: () => void;
   addItem: (item: PseudocodeAnalysisModel) => void;
   updateItem: (item: PseudocodeAnalysisModel) => void;
   selectItem: (item: PseudocodeAnalysisModel | null) => void;
   getItemById: (id: number) => PseudocodeAnalysisModel | null;
+  setEditedCode: (code: string) => void;
+  saveEditedCode: () => void;
+  setExecuteAnalysisInThisMoment: (value: boolean) => void;
 }
 
 const PseudocodeAnalysisContext = createContext<PseudocodeAnalysisContextType | undefined>(undefined);
@@ -24,6 +29,8 @@ interface PseudocodeAnalysisProviderProps {
 export function PseudocodeAnalysisProvider({ children }: PseudocodeAnalysisProviderProps) {
   const [items, setItems] = useState<PseudocodeAnalysisModel[]>([]);
   const [selectedItem, setSelectedItem] = useState<PseudocodeAnalysisModel | null>(null);
+  const [editedCode, setEditedCode] = useState<string>('');
+  const [executeAnalysisInThisMoment, setExecuteAnalysisInThisMoment] = useState<boolean>(false);
 
   const loadItems = () => {
     const loadedItems = PseudocodeAnalysisService.getAll();
@@ -46,11 +53,27 @@ export function PseudocodeAnalysisProvider({ children }: PseudocodeAnalysisProvi
 
   const selectItem = (item: PseudocodeAnalysisModel | null) => {
     setSelectedItem(item);
-    // Guardar el id del item seleccionado en localStorage
+    // Inicializar el código editado con el pseudocódigo del item seleccionado
     if (item) {
+      setEditedCode(item.pseudocode);
       LocalStorageService.set<number>(SELECTED_ITEM_ID_KEY, item.id);
     } else {
+      setEditedCode('');
       LocalStorageService.remove(SELECTED_ITEM_ID_KEY);
+    }
+  };
+
+  const handleSetEditedCode = (code: string) => {
+    setEditedCode(code);
+  };
+
+  const saveEditedCode = () => {
+    if (selectedItem) {
+      const updatedItem = {
+        ...selectedItem,
+        pseudocode: editedCode,
+      };
+      updateItem(updatedItem);
     }
   };
 
@@ -68,6 +91,7 @@ export function PseudocodeAnalysisProvider({ children }: PseudocodeAnalysisProvi
       const item = PseudocodeAnalysisService.getById(savedItemId);
       if (item) {
         setSelectedItem(item);
+        setEditedCode(item.pseudocode);
       } else {
         // Si el item no existe, limpiar el localStorage
         LocalStorageService.remove(SELECTED_ITEM_ID_KEY);
@@ -80,11 +104,16 @@ export function PseudocodeAnalysisProvider({ children }: PseudocodeAnalysisProvi
       value={{
         items,
         selectedItem,
+        editedCode,
+        executeAnalysisInThisMoment,
         loadItems,
         addItem,
         updateItem,
         selectItem,
         getItemById,
+        setEditedCode: handleSetEditedCode,
+        saveEditedCode,
+        setExecuteAnalysisInThisMoment,
       }}
     >
       {children}
