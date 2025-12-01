@@ -3,7 +3,7 @@ import EmptyStateComponent from '../shared/EmptyStateComponent';
 import { BsFolder2Open } from 'react-icons/bs';
 
 function FilesListSpecificComponent() {
-  const { items } = usePseudocodeAnalysis();
+  const { items, selectedItem, selectItem } = usePseudocodeAnalysis();
 
   const getFileNameWithoutExtension = (fileName: string): string => {
     const lastDotIndex = fileName.lastIndexOf('.');
@@ -11,6 +11,10 @@ function FilesListSpecificComponent() {
       return fileName;
     }
     return fileName.substring(0, lastDotIndex);
+  };
+
+  const handleItemClick = (item: typeof items[0]) => {
+    selectItem(item);
   };
 
   return (
@@ -22,14 +26,22 @@ function FilesListSpecificComponent() {
         />
       ) : (
         <ul className="space-y-5">
-          {items.map((item) => (
-            <li
-              key={item.id}
-              className="text-white text-sm p-2 bg-[#3a3a4e] rounded hover:bg-[#4a4a5e] cursor-pointer transition-colors"
-            >
-              {getFileNameWithoutExtension(item.fileName)}
-            </li>
-          ))}
+          {items.map((item) => {
+            const isSelected = selectedItem?.id === item.id;
+            return (
+              <li
+                key={item.id}
+                onClick={() => handleItemClick(item)}
+                className={`text-white text-sm p-2 rounded cursor-pointer transition-colors ${
+                  isSelected
+                    ? 'bg-[#5a5a7e] hover:bg-[#6a6a8e]'
+                    : 'bg-[#3a3a4e] hover:bg-[#454556]'
+                }`}
+              >
+                {getFileNameWithoutExtension(item.fileName)}
+              </li>
+            );
+          })}
         </ul>
       )}
     </div>
