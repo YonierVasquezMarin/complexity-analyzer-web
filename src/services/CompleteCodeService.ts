@@ -6,7 +6,7 @@ import type { CompleteCodeResponseModel } from '../models/CompleteCodeResponseMo
  * Servicio para completar código mediante el endpoint /complete-code
  */
 export class CompleteCodeService {
-  private static readonly BASE_URL = 'http://localhost:8000';
+  private static readonly BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
   private static readonly ENDPOINT = '/complete-code';
 
   /**

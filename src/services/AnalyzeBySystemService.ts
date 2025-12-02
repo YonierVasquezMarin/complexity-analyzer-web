@@ -6,7 +6,7 @@ import type { AnalyzeBySystemResponseModel, AnalyzeBySystemErrorResponseModel } 
  * Servicio para analizar código mediante el endpoint /analyze-by-system
  */
 export class AnalyzeBySystemService {
-  private static readonly BASE_URL = 'http://localhost:8000';
+  private static readonly BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:8000';
   private static readonly ENDPOINT = '/analyze-by-system';
 
   /**
