@@ -16,6 +16,7 @@ import {
   FiActivity,
   FiHash
 } from 'react-icons/fi';
+import SelectedItemNameComponent from '../components/SelectedItemNameComponent';
 
 // Componente para renderizar diagramas Mermaid
 function MermaidDiagram({ diagram, id }: { diagram: string; id: string }) {
@@ -168,9 +169,12 @@ function ShowLLMAnalysisPage() {
   return (
     <div className="w-full h-screen bg-[#1e1e2e] flex flex-col overflow-hidden">
       {/* Header */}
-      <div className="p-6 border-b border-[#3a3a4e] flex-shrink-0">
-        <h2 className="text-2xl font-bold text-white mb-2">Análisis por LLM</h2>
-        <p className="text-sm text-gray-400">Análisis completo de complejidad algorítmica con inteligencia artificial</p>
+      <div className="p-6 border-b border-[#3a3a4e] flex-shrink-0 flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-bold text-white mb-2">Análisis por LLM</h2>
+          <p className="text-sm text-gray-400">Análisis completo de complejidad algorítmica con inteligencia artificial</p>
+        </div>
+        <SelectedItemNameComponent variant="header" />
       </div>
 
       {/* Contenido principal */}

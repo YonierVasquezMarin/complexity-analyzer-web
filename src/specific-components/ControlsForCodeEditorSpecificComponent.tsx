@@ -3,18 +3,11 @@ import ButtonComponent from '../shared/ButtonComponent';
 import { FiSave, FiEye, FiPlay } from 'react-icons/fi';
 import { usePseudocodeAnalysis } from '../context/PseudocodeAnalysisContext';
 import { ModalService } from '../services/ModalService';
+import SelectedItemNameComponent from '../components/SelectedItemNameComponent';
 
 function ControlsForCodeEditorSpecificComponent() {
   const { selectedItem, saveEditedCode, setExecuteAnalysisInThisMoment, updateItem } = usePseudocodeAnalysis();
   const navigate = useNavigate();
-
-  const getFileNameWithoutExtension = (fileName: string): string => {
-    const lastDotIndex = fileName.lastIndexOf('.');
-    if (lastDotIndex === -1) {
-      return fileName;
-    }
-    return fileName.substring(0, lastDotIndex);
-  };
 
   const handleSave = () => {
     if (selectedItem) {
@@ -101,9 +94,7 @@ function ControlsForCodeEditorSpecificComponent() {
 
       {/* Nombre del archivo - Centro */}
       <div className="flex-1 flex justify-center">
-        <span className="text-gray-400 text-lg font-medium">
-          {selectedItem ? getFileNameWithoutExtension(selectedItem.fileName) : ''}
-        </span>
+        <SelectedItemNameComponent variant="header" />
       </div>
 
       {/* Botones Ver resultados y Ejecutar análisis - Derecha */}

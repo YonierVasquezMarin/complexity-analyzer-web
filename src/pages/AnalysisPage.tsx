@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { usePseudocodeAnalysis } from '../context/PseudocodeAnalysisContext';
 import AreaToEditCodeComponent from '../components/AreaToEditCodeComponent';
 import AnalysisResultsComponent from '../specific-components/AnalysisResultsComponent';
+import SelectedItemNameComponent from '../components/SelectedItemNameComponent';
 
 function AnalysisPage() {
   const navigate = useNavigate();
@@ -28,6 +29,7 @@ function AnalysisPage() {
     <div className="w-full h-screen flex overflow-hidden">
       {/* Sección izquierda - 30% */}
       <div className="w-[30%] h-full bg-[#1e1e2e] flex flex-col overflow-hidden">
+        <SelectedItemNameComponent />
         <AreaToEditCodeComponent readOnly={true} />
       </div>
 

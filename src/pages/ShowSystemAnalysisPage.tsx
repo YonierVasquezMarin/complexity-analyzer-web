@@ -1,6 +1,7 @@
 import { usePseudocodeAnalysis } from '../context/PseudocodeAnalysisContext';
 import EmptyStateComponent from '../shared/EmptyStateComponent';
 import { FiBarChart2, FiCpu, FiZap, FiTarget, FiRefreshCw, FiCheckCircle, FiXCircle } from 'react-icons/fi';
+import SelectedItemNameComponent from '../components/SelectedItemNameComponent';
 
 function ShowSystemAnalysisPage() {
   const { selectedItem } = usePseudocodeAnalysis();
@@ -40,9 +41,12 @@ function ShowSystemAnalysisPage() {
   return (
     <div className="w-full h-screen bg-[#1e1e2e] flex flex-col overflow-hidden">
       {/* Header */}
-      <div className="p-6 border-b border-[#3a3a4e] flex-shrink-0">
-        <h2 className="text-2xl font-bold text-white mb-2">Análisis por Sistema</h2>
-        <p className="text-sm text-gray-400">Análisis de complejidad algorítmica</p>
+      <div className="p-6 border-b border-[#3a3a4e] flex-shrink-0 flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-bold text-white mb-2">Análisis por Sistema</h2>
+          <p className="text-sm text-gray-400">Análisis de complejidad algorítmica</p>
+        </div>
+        <SelectedItemNameComponent variant="header" />
       </div>
 
       {/* Contenido principal */}

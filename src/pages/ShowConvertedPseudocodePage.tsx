@@ -1,6 +1,7 @@
 import { usePseudocodeAnalysis } from '../context/PseudocodeAnalysisContext';
 import EmptyStateComponent from '../shared/EmptyStateComponent';
 import { FiFileText, FiArrowRight } from 'react-icons/fi';
+import SelectedItemNameComponent from '../components/SelectedItemNameComponent';
 
 function ShowConvertedPseudocodePage() {
   const { selectedItem } = usePseudocodeAnalysis();
@@ -38,8 +39,9 @@ function ShowConvertedPseudocodePage() {
   return (
     <div className="w-full h-screen bg-[#1e1e2e] flex flex-col">
       {/* Header */}
-      <div className="p-6 border-b border-[#3a3a4e]">
+      <div className="p-6 border-b border-[#3a3a4e] flex items-center justify-between">
         <h2 className="text-2xl font-bold text-white">Pseudocódigo Convertido</h2>
+        <SelectedItemNameComponent variant="header" />
       </div>
 
       {/* Contenido principal: antes y después */}
