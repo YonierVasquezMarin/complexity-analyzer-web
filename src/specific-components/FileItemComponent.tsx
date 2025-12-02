@@ -53,6 +53,8 @@ function FileItemComponent({ item, isSelected, onClick }: FileItemComponentProps
     });
   };
 
+  const hasResults = !!(item.systemAnalysis || item.llmAnalysis);
+
   return (
     <li
       onClick={() => onClick(item)}
@@ -64,7 +66,15 @@ function FileItemComponent({ item, isSelected, onClick }: FileItemComponentProps
           : 'bg-[#3a3a4e] hover:bg-[#454556]'
       }`}
     >
-      <span className="flex-1">{getFileNameWithoutExtension(item.fileName)}</span>
+      <span className="flex-1 flex items-center gap-2">
+        {getFileNameWithoutExtension(item.fileName)}
+        {hasResults && (
+          <span
+            className="w-2 h-2 rounded-full bg-green-500 shrink-0"
+            title="Este archivo tiene resultados de análisis cargados"
+          />
+        )}
+      </span>
       <div
         className={`flex items-center gap-2 transition-opacity duration-200 ${
           isHovered ? 'opacity-100' : 'opacity-0'
