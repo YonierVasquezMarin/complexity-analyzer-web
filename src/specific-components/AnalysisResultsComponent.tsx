@@ -273,8 +273,10 @@ function AnalysisResultsComponent() {
 
   // Función para manejar el clic en el nodo "Generador de pseudocódigo"
   const handleGeneratorNodeClick = useCallback(() => {
-    navigate('/converted-pseudocode');
-  }, [navigate]);
+    if (generatorStatus === 'completed') {
+      navigate('/converted-pseudocode');
+    }
+  }, [navigate, generatorStatus]);
 
   // Definición de nodos
   const nodes = useMemo<Node[]>(
