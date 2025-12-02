@@ -278,6 +278,13 @@ function AnalysisResultsComponent() {
     }
   }, [navigate, generatorStatus]);
 
+  // Función para manejar el clic en el nodo "Análisis por sistema"
+  const handleSystemAnalysisNodeClick = useCallback(() => {
+    if (systemAnalysisStatus === 'completed') {
+      navigate('/system-analysis');
+    }
+  }, [navigate, systemAnalysisStatus]);
+
   // Definición de nodos
   const nodes = useMemo<Node[]>(
     () => [
@@ -301,7 +308,11 @@ function AnalysisResultsComponent() {
         id: 'nieto1',
         type: 'custom',
         position: { x: 90, y: 430 },
-        data: { title: 'Análisis por sistema', status: systemAnalysisStatus },
+        data: { 
+          title: 'Análisis por sistema', 
+          status: systemAnalysisStatus,
+          onClick: handleSystemAnalysisNodeClick,
+        },
       },
       {
         id: 'nieto2',
@@ -316,7 +327,7 @@ function AnalysisResultsComponent() {
         data: { title: 'Comparación de resultados', status: comparisonStatus },
       },
     ],
-    [generatorStatus, systemAnalysisStatus, llmAnalysisStatus, comparisonStatus, handleGeneratorNodeClick]
+    [generatorStatus, systemAnalysisStatus, llmAnalysisStatus, comparisonStatus, handleGeneratorNodeClick, handleSystemAnalysisNodeClick]
   );
 
   // Definición de conexiones (edges)
