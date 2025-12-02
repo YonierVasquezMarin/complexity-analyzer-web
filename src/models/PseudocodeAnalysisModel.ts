@@ -1,3 +1,5 @@
+import type { AnalyzeBySystemResponseModel } from './AnalyzeBySystemResponseModel';
+
 /**
  * La interfaz PseudocodeAnalysisModel representa el modelo de un análisis de pseudocódigo.
  *
@@ -15,11 +17,15 @@
  * - fileName: Nombre del archivo asociado al pseudocódigo, si proviene de un archivo subido
  *   por el usuario (puede ser útil para referencia o para mostrar al usuario).
  *   Ejemplo: "algoritmo1.txt"
+ * 
+ * - systemAnalysis: Resultado del análisis por sistema del pseudocódigo convertido.
+ *   Contiene las notaciones Big O, Omega, Theta y los detalles de complejidad.
  */
 export interface PseudocodeAnalysisModel {
   id: number;
   pseudocode: string;
   convertedPseudocode?: string;
   fileName: string;
+  systemAnalysis?: AnalyzeBySystemResponseModel;
 }
 

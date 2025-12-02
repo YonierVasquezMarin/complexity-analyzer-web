@@ -1,4 +1,4 @@
-import { useMemo, useEffect, useState } from 'react';
+import { useMemo, useEffect, useState, useRef } from 'react';
 import ReactFlow, {
   ConnectionMode,
   MarkerType,
@@ -8,6 +8,7 @@ import 'reactflow/dist/style.css';
 import NodeForAnalysisResultComponent from './NodeForAnalysisResultComponent';
 import { usePseudocodeAnalysis } from '../context/PseudocodeAnalysisContext';
 import { CompleteCodeService } from '../services/CompleteCodeService';
+import { AnalyzeBySystemService } from '../services/AnalyzeBySystemService';
 import type { NodeStatus } from './NodeForAnalysisResultComponent';
 
 const nodeTypes = {
@@ -17,7 +18,10 @@ const nodeTypes = {
 function AnalysisResultsComponent() {
   const { selectedItem, executeAnalysisInThisMoment, updateItem, setExecuteAnalysisInThisMoment } = usePseudocodeAnalysis();
   const [generatorStatus, setGeneratorStatus] = useState<NodeStatus>('not_started');
+  const [systemAnalysisStatus, setSystemAnalysisStatus] = useState<NodeStatus>('not_started');
   const [isConverting, setIsConverting] = useState(false);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const hasCleanedRef = useRef(false);
 
   // Actualizar el estado del generador cuando cambia el item seleccionado (solo si no está convirtiendo)
   useEffect(() => {
@@ -31,6 +35,57 @@ function AnalysisResultsComponent() {
       setGeneratorStatus('not_started');
     }
   }, [selectedItem, isConverting]);
+
+  // Actualizar el estado del análisis por sistema cuando cambia el item seleccionado (solo si no está analizando)
+  useEffect(() => {
+    if (isAnalyzing) {
+      return; // No actualizar el estado si está en proceso de análisis
+    }
+
+    if (selectedItem?.systemAnalysis) {
+      setSystemAnalysisStatus('completed');
+    } else {
+      setSystemAnalysisStatus('not_started');
+    }
+  }, [selectedItem, isAnalyzing]);
+
+  // Efecto para limpiar los datos del análisis cuando executeAnalysisInThisMoment es true
+  useEffect(() => {
+    if (!executeAnalysisInThisMoment || !selectedItem) {
+      // Resetear el flag cuando executeAnalysisInThisMoment es false
+      if (!executeAnalysisInThisMoment) {
+        hasCleanedRef.current = false;
+      }
+      return;
+    }
+
+    // Verificar si ya se limpió en este ciclo para evitar loops infinitos
+    if (hasCleanedRef.current) {
+      return;
+    }
+
+    // Verificar si realmente necesita limpiar (si ya está limpio, no hacer nada)
+    const needsCleaning = selectedItem.convertedPseudocode !== undefined || selectedItem.systemAnalysis !== undefined;
+    if (!needsCleaning) {
+      hasCleanedRef.current = true;
+      return;
+    }
+
+    // Marcar que ya se limpió
+    hasCleanedRef.current = true;
+
+    // Limpiar los datos del análisis del backend
+    const cleanedItem = {
+      ...selectedItem,
+      convertedPseudocode: undefined,
+      systemAnalysis: undefined,
+    };
+    updateItem(cleanedItem);
+
+    // Resetear los estados de los nodos
+    setGeneratorStatus('not_started');
+    setSystemAnalysisStatus('not_started');
+  }, [executeAnalysisInThisMoment, selectedItem, updateItem]);
 
   // Efecto para manejar la conversión de pseudocódigo cuando executeAnalysisInThisMoment es true
   useEffect(() => {
@@ -79,6 +134,59 @@ function AnalysisResultsComponent() {
     return () => clearTimeout(timer);
   }, [executeAnalysisInThisMoment, selectedItem, updateItem, setExecuteAnalysisInThisMoment]);
 
+  // Efecto para manejar el análisis por sistema cuando el pseudocódigo convertido esté disponible
+  useEffect(() => {
+    if (!selectedItem || !selectedItem.convertedPseudocode || selectedItem.convertedPseudocode.trim() === '') {
+      return;
+    }
+
+    // Si ya tiene análisis guardado, no volver a analizar
+    if (selectedItem.systemAnalysis) {
+      return;
+    }
+
+    // Si está analizando o convirtiendo, no hacer nada
+    if (isAnalyzing || isConverting) {
+      return;
+    }
+
+    const analyzeBySystem = async () => {
+      // Marcar como in_progress y establecer flag de análisis
+      setSystemAnalysisStatus('in_progress');
+      setIsAnalyzing(true);
+
+      try {
+        // Llamar al servicio para analizar el código
+        const analysisResponse = await AnalyzeBySystemService.analyzeBySystem({
+          pseudocode: selectedItem.convertedPseudocode!,
+        });
+
+        // Actualizar el item con el resultado del análisis
+        const updatedItem = {
+          ...selectedItem,
+          systemAnalysis: analysisResponse,
+        };
+        updateItem(updatedItem);
+
+        // Marcar como completado y quitar flag de análisis
+        setSystemAnalysisStatus('completed');
+        setIsAnalyzing(false);
+      } catch (error) {
+        console.error('Error al analizar el código por sistema:', error);
+        // En caso de error, mantener el estado como not_started y quitar flag de análisis
+        setSystemAnalysisStatus('not_started');
+        setIsAnalyzing(false);
+      }
+    };
+
+    // Usar un pequeño delay para asegurar que el estado se haya propagado completamente
+    const timer = setTimeout(() => {
+      analyzeBySystem();
+    }, 50);
+
+    return () => clearTimeout(timer);
+  }, [selectedItem, isAnalyzing, isConverting, updateItem]);
+
   // Definición de nodos
   const nodes = useMemo<Node[]>(
     () => [
@@ -98,7 +206,7 @@ function AnalysisResultsComponent() {
         id: 'nieto1',
         type: 'custom',
         position: { x: 90, y: 430 },
-        data: { title: 'Análisis por sistema', status: 'not_started' },
+        data: { title: 'Análisis por sistema', status: systemAnalysisStatus },
       },
       {
         id: 'nieto2',
@@ -113,7 +221,7 @@ function AnalysisResultsComponent() {
         data: { title: 'Comparación de resultados', status: 'not_started' },
       },
     ],
-    [generatorStatus]
+    [generatorStatus, systemAnalysisStatus]
   );
 
   // Definición de conexiones (edges)
