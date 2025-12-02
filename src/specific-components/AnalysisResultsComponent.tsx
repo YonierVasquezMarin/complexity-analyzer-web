@@ -322,7 +322,7 @@ function AnalysisResultsComponent() {
       {
         id: 'hijo',
         type: 'custom',
-        position: { x: 340, y: 230 },
+        position: { x: 340, y: 180 },
         data: { 
           title: 'Generador de pseudocódigo', 
           status: generatorStatus,
@@ -332,7 +332,7 @@ function AnalysisResultsComponent() {
       {
         id: 'nieto1',
         type: 'custom',
-        position: { x: 90, y: 430 },
+        position: { x: 90, y: 320 },
         data: { 
           title: 'Análisis por sistema', 
           status: systemAnalysisStatus,
@@ -342,7 +342,7 @@ function AnalysisResultsComponent() {
       {
         id: 'nieto2',
         type: 'custom',
-        position: { x: 590, y: 430 },
+        position: { x: 590, y: 320 },
         data: { 
           title: 'Análisis por LLM', 
           status: llmAnalysisStatus,
@@ -352,7 +352,7 @@ function AnalysisResultsComponent() {
       {
         id: 'central',
         type: 'custom',
-        position: { x: 340, y: 420 },
+        position: { x: 340, y: 450 },
         data: { 
           title: 'Comparación de resultados', 
           status: comparisonStatus,
@@ -412,8 +412,8 @@ function AnalysisResultsComponent() {
         id: 'nieto1-central',
         source: 'nieto1',
         target: 'central',
-        type: 'straight',
-        sourceHandle: 'right',
+        type: 'step',
+        sourceHandle: 'bottom',
         targetHandle: 'left-target',
         animated: false,
         style: { stroke: '#3b82f6', strokeWidth: 2 },
@@ -426,8 +426,8 @@ function AnalysisResultsComponent() {
         id: 'nieto2-central',
         source: 'nieto2',
         target: 'central',
-        type: 'straight',
-        sourceHandle: 'left',
+        type: 'step',
+        sourceHandle: 'bottom',
         targetHandle: 'right-target',
         animated: false,
         style: { stroke: '#3b82f6', strokeWidth: 2 },
