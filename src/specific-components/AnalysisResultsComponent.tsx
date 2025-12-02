@@ -9,6 +9,7 @@ import NodeForAnalysisResultComponent from './NodeForAnalysisResultComponent';
 import { usePseudocodeAnalysis } from '../context/PseudocodeAnalysisContext';
 import { CompleteCodeService } from '../services/CompleteCodeService';
 import { AnalyzeBySystemService } from '../services/AnalyzeBySystemService';
+import { AnalyzeByLLMService } from '../services/AnalyzeByLLMService';
 import type { NodeStatus } from './NodeForAnalysisResultComponent';
 
 const nodeTypes = {
@@ -19,8 +20,10 @@ function AnalysisResultsComponent() {
   const { selectedItem, executeAnalysisInThisMoment, updateItem, setExecuteAnalysisInThisMoment } = usePseudocodeAnalysis();
   const [generatorStatus, setGeneratorStatus] = useState<NodeStatus>('not_started');
   const [systemAnalysisStatus, setSystemAnalysisStatus] = useState<NodeStatus>('not_started');
+  const [llmAnalysisStatus, setLlmAnalysisStatus] = useState<NodeStatus>('not_started');
   const [isConverting, setIsConverting] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [isAnalyzingLLM, setIsAnalyzingLLM] = useState(false);
   const hasCleanedRef = useRef(false);
 
   // Actualizar el estado del generador cuando cambia el item seleccionado (solo si no está convirtiendo)
@@ -49,6 +52,19 @@ function AnalysisResultsComponent() {
     }
   }, [selectedItem, isAnalyzing]);
 
+  // Actualizar el estado del análisis por LLM cuando cambia el item seleccionado (solo si no está analizando)
+  useEffect(() => {
+    if (isAnalyzingLLM) {
+      return; // No actualizar el estado si está en proceso de análisis
+    }
+
+    if (selectedItem?.llmAnalysis) {
+      setLlmAnalysisStatus('completed');
+    } else {
+      setLlmAnalysisStatus('not_started');
+    }
+  }, [selectedItem, isAnalyzingLLM]);
+
   // Efecto para limpiar los datos del análisis cuando executeAnalysisInThisMoment es true
   useEffect(() => {
     if (!executeAnalysisInThisMoment || !selectedItem) {
@@ -65,7 +81,7 @@ function AnalysisResultsComponent() {
     }
 
     // Verificar si realmente necesita limpiar (si ya está limpio, no hacer nada)
-    const needsCleaning = selectedItem.convertedPseudocode !== undefined || selectedItem.systemAnalysis !== undefined;
+    const needsCleaning = selectedItem.convertedPseudocode !== undefined || selectedItem.systemAnalysis !== undefined || selectedItem.llmAnalysis !== undefined;
     if (!needsCleaning) {
       hasCleanedRef.current = true;
       return;
@@ -79,12 +95,14 @@ function AnalysisResultsComponent() {
       ...selectedItem,
       convertedPseudocode: undefined,
       systemAnalysis: undefined,
+      llmAnalysis: undefined,
     };
     updateItem(cleanedItem);
 
     // Resetear los estados de los nodos
     setGeneratorStatus('not_started');
     setSystemAnalysisStatus('not_started');
+    setLlmAnalysisStatus('not_started');
   }, [executeAnalysisInThisMoment, selectedItem, updateItem]);
 
   // Efecto para manejar la conversión de pseudocódigo cuando executeAnalysisInThisMoment es true
@@ -187,6 +205,59 @@ function AnalysisResultsComponent() {
     return () => clearTimeout(timer);
   }, [selectedItem, isAnalyzing, isConverting, updateItem]);
 
+  // Efecto para manejar el análisis por LLM cuando el pseudocódigo convertido esté disponible
+  useEffect(() => {
+    if (!selectedItem || !selectedItem.convertedPseudocode || selectedItem.convertedPseudocode.trim() === '') {
+      return;
+    }
+
+    // Si ya tiene análisis guardado, no volver a analizar
+    if (selectedItem.llmAnalysis) {
+      return;
+    }
+
+    // Si está analizando o convirtiendo, no hacer nada
+    if (isAnalyzingLLM || isConverting) {
+      return;
+    }
+
+    const analyzeByLLM = async () => {
+      // Marcar como in_progress y establecer flag de análisis
+      setLlmAnalysisStatus('in_progress');
+      setIsAnalyzingLLM(true);
+
+      try {
+        // Llamar al servicio para analizar el código con LLM
+        const analysisResponse = await AnalyzeByLLMService.analyzeByLLM({
+          pseudocode: selectedItem.convertedPseudocode!,
+        });
+
+        // Actualizar el item con el resultado del análisis
+        const updatedItem = {
+          ...selectedItem,
+          llmAnalysis: analysisResponse,
+        };
+        updateItem(updatedItem);
+
+        // Marcar como completado y quitar flag de análisis
+        setLlmAnalysisStatus('completed');
+        setIsAnalyzingLLM(false);
+      } catch (error) {
+        console.error('Error al analizar el código por LLM:', error);
+        // En caso de error, mantener el estado como not_started y quitar flag de análisis
+        setLlmAnalysisStatus('not_started');
+        setIsAnalyzingLLM(false);
+      }
+    };
+
+    // Usar un pequeño delay para asegurar que el estado se haya propagado completamente
+    const timer = setTimeout(() => {
+      analyzeByLLM();
+    }, 50);
+
+    return () => clearTimeout(timer);
+  }, [selectedItem, isAnalyzingLLM, isConverting, updateItem]);
+
   // Definición de nodos
   const nodes = useMemo<Node[]>(
     () => [
@@ -212,7 +283,7 @@ function AnalysisResultsComponent() {
         id: 'nieto2',
         type: 'custom',
         position: { x: 590, y: 430 },
-        data: { title: 'Análisis por LLM', status: 'not_started' },
+        data: { title: 'Análisis por LLM', status: llmAnalysisStatus },
       },
       {
         id: 'central',
@@ -221,7 +292,7 @@ function AnalysisResultsComponent() {
         data: { title: 'Comparación de resultados', status: 'not_started' },
       },
     ],
-    [generatorStatus, systemAnalysisStatus]
+    [generatorStatus, systemAnalysisStatus, llmAnalysisStatus]
   );
 
   // Definición de conexiones (edges)

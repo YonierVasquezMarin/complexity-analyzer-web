@@ -1,4 +1,5 @@
 import type { AnalyzeBySystemResponseModel } from './AnalyzeBySystemResponseModel';
+import type { AnalyzeByLLMResponseModel } from './AnalyzeByLLMResponseModel';
 
 /**
  * La interfaz PseudocodeAnalysisModel representa el modelo de un análisis de pseudocódigo.
@@ -20,6 +21,10 @@ import type { AnalyzeBySystemResponseModel } from './AnalyzeBySystemResponseMode
  * 
  * - systemAnalysis: Resultado del análisis por sistema del pseudocódigo convertido.
  *   Contiene las notaciones Big O, Omega, Theta y los detalles de complejidad.
+ * 
+ * - llmAnalysis: Resultado del análisis por LLM del pseudocódigo convertido.
+ *   Contiene un análisis completo de complejidad generado por LLM con análisis paso a paso,
+ *   clasificación de patrones, representación matemática, diagramas y análisis de costos.
  */
 export interface PseudocodeAnalysisModel {
   id: number;
@@ -27,5 +32,6 @@ export interface PseudocodeAnalysisModel {
   convertedPseudocode?: string;
   fileName: string;
   systemAnalysis?: AnalyzeBySystemResponseModel;
+  llmAnalysis?: AnalyzeByLLMResponseModel;
 }
 
