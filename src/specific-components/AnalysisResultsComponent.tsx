@@ -21,6 +21,7 @@ function AnalysisResultsComponent() {
   const [generatorStatus, setGeneratorStatus] = useState<NodeStatus>('not_started');
   const [systemAnalysisStatus, setSystemAnalysisStatus] = useState<NodeStatus>('not_started');
   const [llmAnalysisStatus, setLlmAnalysisStatus] = useState<NodeStatus>('not_started');
+  const [comparisonStatus, setComparisonStatus] = useState<NodeStatus>('not_started');
   const [isConverting, setIsConverting] = useState(false);
   const [isAnalyzing, setIsAnalyzing] = useState(false);
   const [isAnalyzingLLM, setIsAnalyzingLLM] = useState(false);
@@ -65,6 +66,15 @@ function AnalysisResultsComponent() {
     }
   }, [selectedItem, isAnalyzingLLM]);
 
+  // Actualizar el estado de comparación cuando ambos análisis estén completos
+  useEffect(() => {
+    if (systemAnalysisStatus === 'completed' && llmAnalysisStatus === 'completed') {
+      setComparisonStatus('completed');
+    } else {
+      setComparisonStatus('not_started');
+    }
+  }, [systemAnalysisStatus, llmAnalysisStatus]);
+
   // Efecto para limpiar los datos del análisis cuando executeAnalysisInThisMoment es true
   useEffect(() => {
     if (!executeAnalysisInThisMoment || !selectedItem) {
@@ -103,6 +113,7 @@ function AnalysisResultsComponent() {
     setGeneratorStatus('not_started');
     setSystemAnalysisStatus('not_started');
     setLlmAnalysisStatus('not_started');
+    setComparisonStatus('not_started');
   }, [executeAnalysisInThisMoment, selectedItem, updateItem]);
 
   // Efecto para manejar la conversión de pseudocódigo cuando executeAnalysisInThisMoment es true
@@ -299,10 +310,10 @@ function AnalysisResultsComponent() {
         id: 'central',
         type: 'custom',
         position: { x: 340, y: 420 },
-        data: { title: 'Comparación de resultados', status: 'not_started' },
+        data: { title: 'Comparación de resultados', status: comparisonStatus },
       },
     ],
-    [generatorStatus, systemAnalysisStatus, llmAnalysisStatus]
+    [generatorStatus, systemAnalysisStatus, llmAnalysisStatus, comparisonStatus]
   );
 
   // Definición de conexiones (edges)
