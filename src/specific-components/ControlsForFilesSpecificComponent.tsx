@@ -96,7 +96,6 @@ function ControlsForFilesSpecificComponent() {
   };
 
   const handleNewFileClick = () => {
-    console.log('handleNewFileClick llamado');
     ModalService.showModal<NameForNewFileModel>({
       title: 'Nuevo Archivo',
       size: 'md',
@@ -108,26 +107,25 @@ function ControlsForFilesSpecificComponent() {
         // No hacer nada al cancelar
       },
     });
-    console.log('ModalService.showModal llamado, estado:', ModalService.getState());
   };
 
   return (
     <div className="flex gap-2">
       <ButtonComponent
-        leftIcon={<FiPlus />}
-        label="Nuevo Archivo"
-        onClick={handleNewFileClick}
+        leftIcon={<FiUpload />}
+        label="Subir Archivo"
+        onFilesSelected={handleFilesSelected}
+        multiple={true}
+        accept=".txt"
         variant="primary"
         size="md"
+        onClick={() => {}}
       />
       <ButtonComponent
-        leftIcon={<FiUpload />}
-        onClick={() => {}}
+        leftIcon={<FiPlus />}
         variant="blue-outline"
         size="md"
-        accept=".txt"
-        multiple={true}
-        onFilesSelected={handleFilesSelected}
+        onClick={handleNewFileClick}
       />
     </div>
   );

@@ -60,7 +60,7 @@ function FileItemComponent({ item, isSelected, onClick }: FileItemComponentProps
       onClick={() => onClick(item)}
       onMouseEnter={() => setIsHovered(true)}
       onMouseLeave={() => setIsHovered(false)}
-      className={`text-white text-sm p-2 rounded cursor-pointer transition-colors flex items-center justify-between group ${
+      className={`text-white text-sm p-2 rounded cursor-pointer transition-colors flex items-center justify-between group select-none ${
         isSelected
           ? 'bg-[#5a5a7e] hover:bg-[#6a6a8e]'
           : 'bg-[#3a3a4e] hover:bg-[#454556]'
