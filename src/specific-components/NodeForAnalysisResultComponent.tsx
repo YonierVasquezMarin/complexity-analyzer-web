@@ -7,6 +7,22 @@ interface NodeForAnalysisResultComponentProps {
   selected?: boolean;
 }
 
+interface NodeContentProps {
+  data: {
+    title: string;
+    [key: string]: any;
+  };
+  className?: string;
+}
+
+function NodeContent({ data, className = '' }: NodeContentProps) {
+  return (
+    <div className={`text-sm font-semibold text-gray-800 text-center ${className}`}>
+      {data.title}
+    </div>
+  );
+}
+
 function NodeForAnalysisResultComponent({
   data,
   selected = false,
@@ -31,9 +47,7 @@ function NodeForAnalysisResultComponent({
       <Handle type="source" position={Position.Right} id="right" isConnectable={false} />
       <Handle type="target" position={Position.Left} id="left-target" isConnectable={false} />
       <Handle type="target" position={Position.Right} id="right-target" isConnectable={false} />
-      <div className="text-sm font-semibold text-gray-800 text-center">
-        {data.title}
-      </div>
+      <NodeContent data={data} />
       <Handle type="source" position={Position.Bottom} id="bottom" isConnectable={false} />
     </div>
   );
