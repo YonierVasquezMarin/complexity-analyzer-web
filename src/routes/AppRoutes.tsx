@@ -4,6 +4,7 @@ import AnalysisPage from '../pages/AnalysisPage'
 import ShowConvertedPseudocodePage from '../pages/ShowConvertedPseudocodePage'
 import ShowSystemAnalysisPage from '../pages/ShowSystemAnalysisPage'
 import ShowLLMAnalysisPage from '../pages/ShowLLMAnalysisPage'
+import ShowComparisonPage from '../pages/ShowComparisonPage'
 
 export const AppRoutes = () => {
   return (
@@ -13,6 +14,7 @@ export const AppRoutes = () => {
       <Route path="/converted-pseudocode" element={<ShowConvertedPseudocodePage />} />
       <Route path="/system-analysis" element={<ShowSystemAnalysisPage />} />
       <Route path="/llm-analysis" element={<ShowLLMAnalysisPage />} />
+      <Route path="/comparison" element={<ShowComparisonPage />} />
     </Routes>
   )
 }

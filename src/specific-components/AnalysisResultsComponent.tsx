@@ -292,6 +292,13 @@ function AnalysisResultsComponent() {
     }
   }, [navigate, llmAnalysisStatus]);
 
+  // Función para manejar el clic en el nodo "Comparación de resultados"
+  const handleComparisonNodeClick = useCallback(() => {
+    if (comparisonStatus === 'completed') {
+      navigate('/comparison');
+    }
+  }, [navigate, comparisonStatus]);
+
   // Definición de nodos
   const nodes = useMemo<Node[]>(
     () => [
@@ -335,10 +342,14 @@ function AnalysisResultsComponent() {
         id: 'central',
         type: 'custom',
         position: { x: 340, y: 420 },
-        data: { title: 'Comparación de resultados', status: comparisonStatus },
+        data: { 
+          title: 'Comparación de resultados', 
+          status: comparisonStatus,
+          onClick: handleComparisonNodeClick,
+        },
       },
     ],
-    [generatorStatus, systemAnalysisStatus, llmAnalysisStatus, comparisonStatus, handleGeneratorNodeClick, handleSystemAnalysisNodeClick, handleLLMAnalysisNodeClick]
+    [generatorStatus, systemAnalysisStatus, llmAnalysisStatus, comparisonStatus, handleGeneratorNodeClick, handleSystemAnalysisNodeClick, handleLLMAnalysisNodeClick, handleComparisonNodeClick]
   );
 
   // Definición de conexiones (edges)
