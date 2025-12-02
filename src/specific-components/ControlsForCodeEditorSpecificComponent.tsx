@@ -2,9 +2,10 @@ import { useNavigate } from 'react-router-dom';
 import ButtonComponent from '../shared/ButtonComponent';
 import { FiSave, FiEye, FiPlay } from 'react-icons/fi';
 import { usePseudocodeAnalysis } from '../context/PseudocodeAnalysisContext';
+import { ModalService } from '../services/ModalService';
 
 function ControlsForCodeEditorSpecificComponent() {
-  const { selectedItem, saveEditedCode, setExecuteAnalysisInThisMoment } = usePseudocodeAnalysis();
+  const { selectedItem, saveEditedCode, setExecuteAnalysisInThisMoment, updateItem } = usePseudocodeAnalysis();
   const navigate = useNavigate();
 
   const getFileNameWithoutExtension = (fileName: string): string => {
@@ -35,8 +36,18 @@ function ControlsForCodeEditorSpecificComponent() {
     }
   };
 
-  const handleExecuteAnalysis = () => {
+  const executeAnalysis = (clearResults = false) => {
     if (selectedItem) {
+      // Si se debe limpiar resultados, actualizar el item sin los análisis
+      if (clearResults) {
+        const updatedItem = {
+          ...selectedItem,
+          systemAnalysis: undefined,
+          llmAnalysis: undefined,
+        };
+        updateItem(updatedItem);
+      }
+
       // Establecer el estado primero
       setExecuteAnalysisInThisMoment(true);
       // Usar requestAnimationFrame para asegurar que el estado se actualice antes de navegar
@@ -45,6 +56,33 @@ function ControlsForCodeEditorSpecificComponent() {
           navigate('/analysis');
         });
       });
+    }
+  };
+
+  const handleExecuteAnalysis = () => {
+    if (!selectedItem) return;
+
+    // Verificar si ya existen resultados guardados
+    const hasResults = selectedItem.systemAnalysis || selectedItem.llmAnalysis;
+
+    if (hasResults) {
+      // Mostrar modal de confirmación
+      ModalService.showModal({
+        title: 'Confirmar ejecución',
+        content: 'Ya existe un resultado, ¿Desea ejecutar de nuevo el análisis?',
+        labelYes: 'Sí',
+        labelNo: 'No',
+        actionForYes: () => {
+          // Limpiar resultados y ejecutar análisis
+          executeAnalysis(true);
+        },
+        actionForNo: () => {
+          // No hacer nada, solo cerrar el modal
+        },
+      });
+    } else {
+      // Si no hay resultados, ejecutar directamente
+      executeAnalysis();
     }
   };
 
