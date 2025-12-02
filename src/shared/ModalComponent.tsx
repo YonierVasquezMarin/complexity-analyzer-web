@@ -11,7 +11,6 @@ function ModalComponent() {
   useEffect(() => {
     const updateState = () => {
       const state = ModalService.getState();
-      console.log('ModalComponent: Estado actualizado', state);
       setIsOpen(state.isOpen);
       setOptions(state.options);
       // Resetear el ref cuando se cierra el modal
@@ -31,7 +30,6 @@ function ModalComponent() {
   const handleYes = () => {
     if (!options) return;
     
-    console.log('handleYes llamado, contentRef.current =', contentRef.current);
     // Si el contenido es string, no hay ref, ejecutar directamente
     if (typeof options.content === 'string') {
       if (options.actionForYes) {
@@ -58,10 +56,6 @@ function ModalComponent() {
       handleNo();
     }
   };
-
-  useEffect(() => {
-    console.log('ModalComponent: isOpen =', isOpen, 'options =', options);
-  }, [isOpen, options]);
 
   if (!isOpen || !options) {
     return null;
