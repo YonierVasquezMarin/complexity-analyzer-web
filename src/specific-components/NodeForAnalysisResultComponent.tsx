@@ -1,8 +1,12 @@
 import { Handle, Position } from 'reactflow';
+import { FaClock, FaSync, FaCheckCircle } from 'react-icons/fa';
+
+export type NodeStatus = 'not_started' | 'in_progress' | 'completed';
 
 interface NodeForAnalysisResultComponentProps {
   data: {
     title: string;
+    status?: NodeStatus;
   };
   selected?: boolean;
 }
@@ -10,15 +14,30 @@ interface NodeForAnalysisResultComponentProps {
 interface NodeContentProps {
   data: {
     title: string;
+    status?: NodeStatus;
     [key: string]: any;
   };
   className?: string;
 }
 
 function NodeContent({ data, className = '' }: NodeContentProps) {
+  const getStatusIcon = () => {
+    switch (data.status) {
+      case 'not_started':
+        return <FaClock className="text-gray-400" size={16} />;
+      case 'in_progress':
+        return <FaSync className="text-yellow-500 animate-spin" size={16} />;
+      case 'completed':
+        return <FaCheckCircle className="text-green-500" size={16} />;
+      default:
+        return <FaClock className="text-gray-400" size={16} />;
+    }
+  };
+
   return (
-    <div className={`text-sm font-semibold text-gray-800 text-center ${className}`}>
-      {data.title}
+    <div className={`flex flex-col items-center gap-2 text-sm font-semibold text-gray-800 ${className}`}>
+      <span className="text-center">{data.title}</span>
+      {getStatusIcon()}
     </div>
   );
 }
