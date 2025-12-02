@@ -1,4 +1,5 @@
-import { useMemo, useEffect, useState, useRef } from 'react';
+import { useMemo, useEffect, useState, useRef, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import ReactFlow, {
   ConnectionMode,
   MarkerType,
@@ -17,6 +18,7 @@ const nodeTypes = {
 };
 
 function AnalysisResultsComponent() {
+  const navigate = useNavigate();
   const { selectedItem, executeAnalysisInThisMoment, updateItem, setExecuteAnalysisInThisMoment } = usePseudocodeAnalysis();
   const [generatorStatus, setGeneratorStatus] = useState<NodeStatus>('not_started');
   const [systemAnalysisStatus, setSystemAnalysisStatus] = useState<NodeStatus>('not_started');
@@ -269,6 +271,11 @@ function AnalysisResultsComponent() {
     return () => clearTimeout(timer);
   }, [executeAnalysisInThisMoment, selectedItem, isAnalyzingLLM, isConverting, updateItem]);
 
+  // Función para manejar el clic en el nodo "Generador de pseudocódigo"
+  const handleGeneratorNodeClick = useCallback(() => {
+    navigate('/converted-pseudocode');
+  }, [navigate]);
+
   // Definición de nodos
   const nodes = useMemo<Node[]>(
     () => [
@@ -282,7 +289,11 @@ function AnalysisResultsComponent() {
         id: 'hijo',
         type: 'custom',
         position: { x: 340, y: 230 },
-        data: { title: 'Generador de pseudocódigo', status: generatorStatus },
+        data: { 
+          title: 'Generador de pseudocódigo', 
+          status: generatorStatus,
+          onClick: handleGeneratorNodeClick,
+        },
       },
       {
         id: 'nieto1',
@@ -303,7 +314,7 @@ function AnalysisResultsComponent() {
         data: { title: 'Comparación de resultados', status: comparisonStatus },
       },
     ],
-    [generatorStatus, systemAnalysisStatus, llmAnalysisStatus, comparisonStatus]
+    [generatorStatus, systemAnalysisStatus, llmAnalysisStatus, comparisonStatus, handleGeneratorNodeClick]
   );
 
   // Definición de conexiones (edges)

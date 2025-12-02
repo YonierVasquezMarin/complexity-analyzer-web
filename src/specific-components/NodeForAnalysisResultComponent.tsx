@@ -7,6 +7,7 @@ interface NodeForAnalysisResultComponentProps {
   data: {
     title: string;
     status?: NodeStatus;
+    onClick?: () => void;
   };
   selected?: boolean;
 }
@@ -50,7 +51,11 @@ function NodeForAnalysisResultComponent({
   const height = 60;
 
   const handleClick = () => {
-    alert(`Nodo: ${data.title}`);
+    if (data.onClick) {
+      data.onClick();
+    } else {
+      alert(`Nodo: ${data.title}`);
+    }
   };
 
   return (
