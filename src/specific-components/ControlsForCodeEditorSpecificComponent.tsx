@@ -29,8 +29,14 @@ function ControlsForCodeEditorSpecificComponent() {
 
   const handleExecuteAnalysis = () => {
     if (selectedItem) {
+      // Establecer el estado primero
       setExecuteAnalysisInThisMoment(true);
-      navigate('/analysis');
+      // Usar requestAnimationFrame para asegurar que el estado se actualice antes de navegar
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          navigate('/analysis');
+        });
+      });
     }
   };
 

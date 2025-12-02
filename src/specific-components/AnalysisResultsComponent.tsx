@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useEffect, useState } from 'react';
 import ReactFlow, {
   ConnectionMode,
   MarkerType,
@@ -6,12 +6,79 @@ import ReactFlow, {
 import type { Node, Edge } from 'reactflow';
 import 'reactflow/dist/style.css';
 import NodeForAnalysisResultComponent from './NodeForAnalysisResultComponent';
+import { usePseudocodeAnalysis } from '../context/PseudocodeAnalysisContext';
+import { CompleteCodeService } from '../services/CompleteCodeService';
+import type { NodeStatus } from './NodeForAnalysisResultComponent';
 
 const nodeTypes = {
   custom: NodeForAnalysisResultComponent,
 };
 
 function AnalysisResultsComponent() {
+  const { selectedItem, executeAnalysisInThisMoment, updateItem, setExecuteAnalysisInThisMoment } = usePseudocodeAnalysis();
+  const [generatorStatus, setGeneratorStatus] = useState<NodeStatus>('not_started');
+  const [isConverting, setIsConverting] = useState(false);
+
+  // Actualizar el estado del generador cuando cambia el item seleccionado (solo si no está convirtiendo)
+  useEffect(() => {
+    if (isConverting) {
+      return; // No actualizar el estado si está en proceso de conversión
+    }
+
+    if (selectedItem?.convertedPseudocode && selectedItem.convertedPseudocode.trim() !== '') {
+      setGeneratorStatus('completed');
+    } else {
+      setGeneratorStatus('not_started');
+    }
+  }, [selectedItem, isConverting]);
+
+  // Efecto para manejar la conversión de pseudocódigo cuando executeAnalysisInThisMoment es true
+  useEffect(() => {
+    if (!executeAnalysisInThisMoment || !selectedItem) {
+      return;
+    }
+
+    const convertPseudocode = async () => {
+      // Marcar como in_progress y establecer flag de conversión
+      setGeneratorStatus('in_progress');
+      setIsConverting(true);
+
+      try {
+        // Llamar al servicio para completar el código
+        const response = await CompleteCodeService.completeCode({
+          pseudocode: selectedItem.pseudocode,
+        });
+
+        // Actualizar el item con el pseudocódigo convertido
+        const updatedItem = {
+          ...selectedItem,
+          convertedPseudocode: response.pseudocode,
+        };
+        updateItem(updatedItem);
+
+        // Marcar como completado y quitar flag de conversión
+        setGeneratorStatus('completed');
+        setIsConverting(false);
+        // Limpiar el flag de ejecución después de completar
+        setExecuteAnalysisInThisMoment(false);
+      } catch (error) {
+        console.error('Error al completar el código:', error);
+        // En caso de error, mantener el estado como not_started y quitar flag de conversión
+        setGeneratorStatus('not_started');
+        setIsConverting(false);
+        // Limpiar el flag de ejecución incluso en caso de error
+        setExecuteAnalysisInThisMoment(false);
+      }
+    };
+
+    // Usar un pequeño delay para asegurar que el estado se haya propagado completamente
+    const timer = setTimeout(() => {
+      convertPseudocode();
+    }, 50);
+
+    return () => clearTimeout(timer);
+  }, [executeAnalysisInThisMoment, selectedItem, updateItem, setExecuteAnalysisInThisMoment]);
+
   // Definición de nodos
   const nodes = useMemo<Node[]>(
     () => [
@@ -25,7 +92,7 @@ function AnalysisResultsComponent() {
         id: 'hijo',
         type: 'custom',
         position: { x: 340, y: 230 },
-        data: { title: 'Generador de pseudocódigo', status: 'in_progress' },
+        data: { title: 'Generador de pseudocódigo', status: generatorStatus },
       },
       {
         id: 'nieto1',
@@ -37,7 +104,7 @@ function AnalysisResultsComponent() {
         id: 'nieto2',
         type: 'custom',
         position: { x: 590, y: 430 },
-        data: { title: 'Análisis por LLM', status: 'in_progress' },
+        data: { title: 'Análisis por LLM', status: 'not_started' },
       },
       {
         id: 'central',
@@ -46,7 +113,7 @@ function AnalysisResultsComponent() {
         data: { title: 'Comparación de resultados', status: 'not_started' },
       },
     ],
-    []
+    [generatorStatus]
   );
 
   // Definición de conexiones (edges)

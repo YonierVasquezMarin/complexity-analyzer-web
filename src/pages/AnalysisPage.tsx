@@ -1,53 +1,22 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { usePseudocodeAnalysis } from '../context/PseudocodeAnalysisContext';
-import type { PseudocodeAnalysisModel } from '../models/PseudocodeAnalysisModel';
 import AreaToEditCodeComponent from '../components/AreaToEditCodeComponent';
 import AnalysisResultsComponent from '../specific-components/AnalysisResultsComponent';
 
 function AnalysisPage() {
   const navigate = useNavigate();
-  const { selectedItem, executeAnalysisInThisMoment, setExecuteAnalysisInThisMoment } = usePseudocodeAnalysis();
-  const [currentItem, setCurrentItem] = useState<PseudocodeAnalysisModel | null>(null);
-  const [shouldExecuteAnalysis, setShouldExecuteAnalysis] = useState<boolean>(false);
+  const { selectedItem } = usePseudocodeAnalysis();
 
   useEffect(() => {
-    // Esperar un pequeño tiempo para que el estado global se cargue
-    const timer = setTimeout(() => {
-      if (selectedItem) {
-        setCurrentItem(selectedItem);
-        // Si executeAnalysisInThisMoment es true, marcar para ejecutar el análisis
-        if (executeAnalysisInThisMoment) {
-          setShouldExecuteAnalysis(true);
-        }
-      } else {
-        // Si no hay item seleccionado, redirigir
-        navigate(-1);
-      }
-    }, 100); // Pequeño delay de 100ms para asegurar que el estado se cargue
-
-    return () => clearTimeout(timer);
-  }, [selectedItem, executeAnalysisInThisMoment, navigate]);
-
-  useEffect(() => {
-    // Ejecutar el análisis si está marcado para ejecutarse
-    if (shouldExecuteAnalysis && currentItem) {
-      console.log('Ejecutar análisis para ID:', currentItem.id);
-      console.log('Pseudocódigo obtenido:', currentItem);
-      // TODO: Implementar lógica adicional para ejecutar el análisis con el pseudocódigo
-      setShouldExecuteAnalysis(false); // Resetear después de ejecutar
+    // Si no hay item seleccionado, redirigir
+    if (!selectedItem) {
+      navigate(-1);
     }
-  }, [shouldExecuteAnalysis, currentItem]);
-
-  // Limpiar executeAnalysisInThisMoment al desmontar el componente (al salir de la página)
-  useEffect(() => {
-    return () => {
-      setExecuteAnalysisInThisMoment(false);
-    };
-  }, [setExecuteAnalysisInThisMoment]);
+  }, [selectedItem, navigate]);
 
   // Si no hay item, no renderizar nada (el useEffect manejará la redirección)
-  if (!currentItem) {
+  if (!selectedItem) {
     return (
       <div className="w-full h-screen flex items-center justify-center bg-[#1e1e2e]">
         {/* Puedes agregar un mensaje o simplemente dejar el fondo plano */}

@@ -31,7 +31,12 @@ export function PseudocodeAnalysisProvider({ children }: PseudocodeAnalysisProvi
   const [items, setItems] = useState<PseudocodeAnalysisModel[]>([]);
   const [selectedItem, setSelectedItem] = useState<PseudocodeAnalysisModel | null>(null);
   const [editedCode, setEditedCode] = useState<string>('');
-  const [executeAnalysisInThisMoment, setExecuteAnalysisInThisMoment] = useState<boolean>(false);
+  const [executeAnalysisInThisMomentState, setExecuteAnalysisInThisMomentState] = useState<boolean>(false);
+
+  // Función para establecer executeAnalysisInThisMoment
+  const setExecuteAnalysisInThisMoment = (value: boolean) => {
+    setExecuteAnalysisInThisMomentState(value);
+  };
 
   const loadItems = () => {
     const loadedItems = PseudocodeAnalysisService.getAll();
@@ -117,7 +122,7 @@ export function PseudocodeAnalysisProvider({ children }: PseudocodeAnalysisProvi
         items,
         selectedItem,
         editedCode,
-        executeAnalysisInThisMoment,
+        executeAnalysisInThisMoment: executeAnalysisInThisMomentState,
         loadItems,
         addItem,
         updateItem,
