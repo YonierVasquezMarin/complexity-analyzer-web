@@ -39,8 +39,11 @@ function ShowConvertedPseudocodePage() {
   return (
     <div className="w-full h-screen bg-[#1e1e2e] flex flex-col">
       {/* Header */}
-      <div className="p-6 border-b border-[#3a3a4e] flex items-center justify-between">
-        <h2 className="text-2xl font-bold text-white">Pseudocódigo Convertido</h2>
+      <div className="p-6 border-b border-[#3a3a4e] flex-shrink-0 flex items-center justify-between">
+        <div>
+          <h2 className="text-2xl font-bold text-white mb-2">Pseudocódigo convertido</h2>
+          <p className="text-sm text-gray-400">Pseudocódigo convertido en base al archivo original</p>
+        </div>
         <SelectedItemNameComponent variant="header" />
       </div>
 

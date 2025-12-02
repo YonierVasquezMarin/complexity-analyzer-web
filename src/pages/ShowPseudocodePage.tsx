@@ -2,6 +2,7 @@ import { usePseudocodeAnalysis } from '../context/PseudocodeAnalysisContext';
 import EmptyStateComponent from '../shared/EmptyStateComponent';
 import { FiFileText } from 'react-icons/fi';
 import SelectedItemNameComponent from '../components/SelectedItemNameComponent';
+import AreaToEditCodeComponent from '../components/AreaToEditCodeComponent';
 
 function ShowPseudocodePage() {
   const { selectedItem } = usePseudocodeAnalysis();
@@ -24,7 +25,7 @@ function ShowPseudocodePage() {
   return (
     <div className="w-full h-screen bg-[#1e1e2e] flex flex-col overflow-hidden">
       {/* Header */}
-      <div className="p-6 border-b border-[#3a3a4e] flex-shrink-0 flex items-center justify-between">
+      <div className="p-6 border-b border-[#3a3a4e] shrink-0 flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold text-white mb-2">Pseudocódigo</h2>
           <p className="text-sm text-gray-400">Pseudocódigo original del archivo</p>
@@ -42,14 +43,8 @@ function ShowPseudocodePage() {
               </div>
               <h3 className="text-xl font-semibold text-white">Código Original</h3>
             </div>
-            <div className="bg-[#1e1e2e] rounded-lg p-6 border border-[#3a3a4e]">
-              {selectedItem.pseudocode && selectedItem.pseudocode.trim() !== '' ? (
-                <pre className="text-white font-mono text-sm whitespace-pre-wrap break-words leading-relaxed">
-                  {selectedItem.pseudocode}
-                </pre>
-              ) : (
-                <p className="text-gray-400 italic">No hay pseudocódigo disponible</p>
-              )}
+            <div className="bg-[#1e1e2e] rounded-lg border border-[#3a3a4e] overflow-hidden" style={{ height: '600px' }}>
+              <AreaToEditCodeComponent readOnly={true} />
             </div>
           </div>
         </div>
