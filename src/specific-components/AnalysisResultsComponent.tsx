@@ -271,6 +271,13 @@ function AnalysisResultsComponent() {
     return () => clearTimeout(timer);
   }, [executeAnalysisInThisMoment, selectedItem, isAnalyzingLLM, isConverting, updateItem]);
 
+  // Función para manejar el clic en el nodo "Pseudocódigo"
+  const handlePseudocodeNodeClick = useCallback(() => {
+    if (selectedItem) {
+      navigate('/pseudocode');
+    }
+  }, [navigate, selectedItem]);
+
   // Función para manejar el clic en el nodo "Generador de pseudocódigo"
   const handleGeneratorNodeClick = useCallback(() => {
     if (generatorStatus === 'completed') {
@@ -306,7 +313,11 @@ function AnalysisResultsComponent() {
         id: 'padre',
         type: 'custom',
         position: { x: 340, y: 20 },
-        data: { title: 'Pseudocódio', status: 'completed' },
+        data: { 
+          title: 'Pseudocódio', 
+          status: 'completed',
+          onClick: handlePseudocodeNodeClick,
+        },
       },
       {
         id: 'hijo',
@@ -349,7 +360,7 @@ function AnalysisResultsComponent() {
         },
       },
     ],
-    [generatorStatus, systemAnalysisStatus, llmAnalysisStatus, comparisonStatus, handleGeneratorNodeClick, handleSystemAnalysisNodeClick, handleLLMAnalysisNodeClick, handleComparisonNodeClick]
+    [generatorStatus, systemAnalysisStatus, llmAnalysisStatus, comparisonStatus, handlePseudocodeNodeClick, handleGeneratorNodeClick, handleSystemAnalysisNodeClick, handleLLMAnalysisNodeClick, handleComparisonNodeClick]
   );
 
   // Definición de conexiones (edges)
