@@ -154,6 +154,11 @@ function AnalysisResultsComponent() {
 
   // Efecto para manejar el análisis por sistema cuando el pseudocódigo convertido esté disponible
   useEffect(() => {
+    // Si executeAnalysisInThisMoment es false, no ejecutar análisis (solo ver resultados)
+    if (!executeAnalysisInThisMoment) {
+      return;
+    }
+
     if (!selectedItem || !selectedItem.convertedPseudocode || selectedItem.convertedPseudocode.trim() === '') {
       return;
     }
@@ -203,10 +208,15 @@ function AnalysisResultsComponent() {
     }, 50);
 
     return () => clearTimeout(timer);
-  }, [selectedItem, isAnalyzing, isConverting, updateItem]);
+  }, [executeAnalysisInThisMoment, selectedItem, isAnalyzing, isConverting, updateItem]);
 
   // Efecto para manejar el análisis por LLM cuando el pseudocódigo convertido esté disponible
   useEffect(() => {
+    // Si executeAnalysisInThisMoment es false, no ejecutar análisis (solo ver resultados)
+    if (!executeAnalysisInThisMoment) {
+      return;
+    }
+
     if (!selectedItem || !selectedItem.convertedPseudocode || selectedItem.convertedPseudocode.trim() === '') {
       return;
     }
@@ -256,7 +266,7 @@ function AnalysisResultsComponent() {
     }, 50);
 
     return () => clearTimeout(timer);
-  }, [selectedItem, isAnalyzingLLM, isConverting, updateItem]);
+  }, [executeAnalysisInThisMoment, selectedItem, isAnalyzingLLM, isConverting, updateItem]);
 
   // Definición de nodos
   const nodes = useMemo<Node[]>(

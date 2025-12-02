@@ -23,8 +23,16 @@ function ControlsForCodeEditorSpecificComponent() {
   };
 
   const handleViewResults = () => {
-    // TODO: Implementar lógica para ver resultados
-    console.log('Ver resultados');
+    if (selectedItem) {
+      // Establecer el estado en false para solo ver resultados sin ejecutar análisis
+      setExecuteAnalysisInThisMoment(false);
+      // Usar requestAnimationFrame para asegurar que el estado se actualice antes de navegar
+      requestAnimationFrame(() => {
+        requestAnimationFrame(() => {
+          navigate('/analysis');
+        });
+      });
+    }
   };
 
   const handleExecuteAnalysis = () => {
