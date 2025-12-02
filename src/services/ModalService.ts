@@ -26,12 +26,10 @@ class ModalServiceClass {
 
   // Método genérico para mostrar el modal con tipado
   showModal<T>(options: ModalOptions<T>): void {
-    console.log('ModalService.showModal llamado con options:', options);
     this.modalState = {
       isOpen: true,
       options: options as ModalOptions<any>,
     };
-    console.log('ModalService: Estado actualizado, listeners:', this.listeners.size);
     this.notifyListeners();
   }
 
@@ -77,9 +75,7 @@ class ModalServiceClass {
   }
 
   private notifyListeners(): void {
-    console.log('ModalService.notifyListeners: Notificando a', this.listeners.size, 'listeners');
     this.listeners.forEach((listener) => {
-      console.log('ModalService: Ejecutando listener');
       listener();
     });
   }
