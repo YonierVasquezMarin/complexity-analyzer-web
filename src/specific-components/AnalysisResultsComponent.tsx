@@ -165,11 +165,6 @@ function AnalysisResultsComponent() {
 
   // Efecto para manejar el análisis por sistema cuando el pseudocódigo convertido esté disponible
   useEffect(() => {
-    // Si executeAnalysisInThisMoment es false, no ejecutar análisis (solo ver resultados)
-    if (!executeAnalysisInThisMoment) {
-      return;
-    }
-
     if (!selectedItem || !selectedItem.convertedPseudocode || selectedItem.convertedPseudocode.trim() === '') {
       return;
     }
@@ -223,11 +218,6 @@ function AnalysisResultsComponent() {
 
   // Efecto para manejar el análisis por LLM cuando el pseudocódigo convertido esté disponible
   useEffect(() => {
-    // Si executeAnalysisInThisMoment es false, no ejecutar análisis (solo ver resultados)
-    if (!executeAnalysisInThisMoment) {
-      return;
-    }
-
     if (!selectedItem || !selectedItem.convertedPseudocode || selectedItem.convertedPseudocode.trim() === '') {
       return;
     }
