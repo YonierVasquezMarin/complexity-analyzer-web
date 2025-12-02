@@ -285,6 +285,13 @@ function AnalysisResultsComponent() {
     }
   }, [navigate, systemAnalysisStatus]);
 
+  // Función para manejar el clic en el nodo "Análisis por LLM"
+  const handleLLMAnalysisNodeClick = useCallback(() => {
+    if (llmAnalysisStatus === 'completed') {
+      navigate('/llm-analysis');
+    }
+  }, [navigate, llmAnalysisStatus]);
+
   // Definición de nodos
   const nodes = useMemo<Node[]>(
     () => [
@@ -318,7 +325,11 @@ function AnalysisResultsComponent() {
         id: 'nieto2',
         type: 'custom',
         position: { x: 590, y: 430 },
-        data: { title: 'Análisis por LLM', status: llmAnalysisStatus },
+        data: { 
+          title: 'Análisis por LLM', 
+          status: llmAnalysisStatus,
+          onClick: handleLLMAnalysisNodeClick,
+        },
       },
       {
         id: 'central',
@@ -327,7 +338,7 @@ function AnalysisResultsComponent() {
         data: { title: 'Comparación de resultados', status: comparisonStatus },
       },
     ],
-    [generatorStatus, systemAnalysisStatus, llmAnalysisStatus, comparisonStatus, handleGeneratorNodeClick, handleSystemAnalysisNodeClick]
+    [generatorStatus, systemAnalysisStatus, llmAnalysisStatus, comparisonStatus, handleGeneratorNodeClick, handleSystemAnalysisNodeClick, handleLLMAnalysisNodeClick]
   );
 
   // Definición de conexiones (edges)
