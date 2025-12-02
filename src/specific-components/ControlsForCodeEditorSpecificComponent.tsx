@@ -1,20 +1,13 @@
 import { useNavigate } from 'react-router-dom';
 import ButtonComponent from '../shared/ButtonComponent';
-import { FiSave, FiEye, FiPlay } from 'react-icons/fi';
+import { FiEye, FiPlay } from 'react-icons/fi';
 import { usePseudocodeAnalysis } from '../context/PseudocodeAnalysisContext';
 import { ModalService } from '../services/ModalService';
 import SelectedItemNameComponent from '../components/SelectedItemNameComponent';
 
 function ControlsForCodeEditorSpecificComponent() {
-  const { selectedItem, saveEditedCode, setExecuteAnalysisInThisMoment, updateItem } = usePseudocodeAnalysis();
+  const { selectedItem, setExecuteAnalysisInThisMoment, updateItem } = usePseudocodeAnalysis();
   const navigate = useNavigate();
-
-  const handleSave = () => {
-    if (selectedItem) {
-      saveEditedCode();
-      console.log('Código guardado exitosamente');
-    }
-  };
 
   const handleViewResults = () => {
     if (selectedItem) {
@@ -81,24 +74,13 @@ function ControlsForCodeEditorSpecificComponent() {
 
   return (
     <div className="flex items-center justify-between w-full p-4 bg-[#1e1e2e] border-b border-[#3a3a4e]">
-      {/* Botón Guardar - Izquierda */}
-      <div className="flex-shrink-0">
-        <ButtonComponent
-          leftIcon={<FiSave />}
-          onClick={handleSave}
-          variant="secondary"
-          size="md"
-          disabled={!selectedItem}
-        />
-      </div>
-
       {/* Nombre del archivo - Centro */}
       <div className="flex-1 flex justify-center">
         <SelectedItemNameComponent variant="header" />
       </div>
 
       {/* Botones Ver resultados y Ejecutar análisis - Derecha */}
-      <div className="flex-shrink-0 flex gap-2">
+      <div className="shrink-0 flex gap-2">
         <ButtonComponent
           leftIcon={<FiEye />}
           label="Ver resultados"

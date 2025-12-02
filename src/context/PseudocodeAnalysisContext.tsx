@@ -98,6 +98,27 @@ export function PseudocodeAnalysisProvider({ children }: PseudocodeAnalysisProvi
     return PseudocodeAnalysisService.getById(id);
   };
 
+  // Auto-guardado: actualizar automáticamente cuando cambia el código editado
+  useEffect(() => {
+    // No guardar si no hay item seleccionado o si el código no ha cambiado
+    if (!selectedItem || editedCode === selectedItem.pseudocode) {
+      return;
+    }
+
+    // Usar debounce para evitar demasiadas actualizaciones mientras el usuario escribe
+    const timeoutId = setTimeout(() => {
+      const updatedItem = {
+        ...selectedItem,
+        pseudocode: editedCode,
+      };
+      updateItem(updatedItem);
+    }, 500); // Esperar 500ms después del último cambio
+
+    // Limpiar el timeout si el código cambia de nuevo antes de que se complete
+    return () => clearTimeout(timeoutId);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [editedCode, selectedItem?.id]);
+
   // Cargar items al montar el componente y restaurar el item seleccionado
   useEffect(() => {
     loadItems();
