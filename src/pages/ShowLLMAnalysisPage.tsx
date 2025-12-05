@@ -17,6 +17,7 @@ import {
   FiHash
 } from 'react-icons/fi';
 import SelectedItemNameComponent from '../components/SelectedItemNameComponent';
+import LatexRenderer from '../components/LatexRenderer';
 
 // Componente para renderizar diagramas Mermaid
 function MermaidDiagram({ diagram, id }: { diagram: string; id: string }) {
@@ -459,9 +460,13 @@ function ShowLLMAnalysisPage() {
               {llmAnalysis.mathematical_representation.latex_notation && (
                 <div className="bg-[#1e1e2e] rounded-lg p-4 border border-[#3a3a4e]">
                   <span className="text-sm font-semibold text-gray-300 block mb-2">Notación LaTeX:</span>
-                  <code className="text-white font-mono text-sm block bg-[#252536] px-3 py-2 rounded">
-                    {llmAnalysis.mathematical_representation.latex_notation}
-                  </code>
+                  <div className="bg-[#252536] px-3 py-2 rounded overflow-x-auto w-full max-w-full">
+                    <LatexRenderer 
+                      latex={llmAnalysis.mathematical_representation.latex_notation} 
+                      displayMode={true}
+                      className="text-white"
+                    />
+                  </div>
                 </div>
               )}
             </div>

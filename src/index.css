@@ -4,6 +4,14 @@ body {
   margin: 0;
   min-width: 320px;
   min-height: 100vh;
+  overflow-x: hidden;
+  overflow-y: auto;
+}
+
+html {
+  overflow-x: hidden;
+  width: 100%;
+  height: 100%;
 }
 
 #root {
@@ -11,4 +19,16 @@ body {
   height: 100vh;
   margin: 0;
   padding: 0;
+  overflow: hidden;
+}
+
+/* Prevenir que KaTeX afecte el layout global */
+.katex-display {
+  margin: 0.5em 0 !important;
+  overflow-x: auto;
+  overflow-y: hidden;
+}
+
+.katex {
+  font-size: 1.1em;
 }
